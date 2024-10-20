@@ -3,4 +3,9 @@ export interface RoleFormInterface {
     mainCharacter:string,
     description:string,
     otherCharacters:Array<string>,
+    relationships?: Array<{
+        role1:string,
+        role2:string,
+        relationship:string,
+    }>,
 }

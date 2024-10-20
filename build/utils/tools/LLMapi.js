@@ -18,6 +18,7 @@ const child_process_1 = require("child_process");
 const opencc_js_1 = __importDefault(require("opencc-js"));
 const ollama_1 = require("ollama");
 const dotenv_1 = __importDefault(require("dotenv"));
+const openai_fetch_1 = require("./openai_fetch");
 dotenv_1.default.config();
 //向 LLM 送一次對話請求
 /**
@@ -97,18 +98,9 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response) => __awaiter(void 0, void 
             },
         };
         const story_1st = yield (0, exports.LLMGenChat)(payload1);
-        // 第二次生成
-        let payload2 = {
-            "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-            // "model": "Whispertales_model_v4.gguf:latest",
-            "prompt": `<|begin_of_text|><|start_header_id|>system<|end_header_id|>你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。<|eot_id|><|start_header_id|>user<|end_header_id|>請修改並優化以下故事：${story_1st}，使其更生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段。只需返回修改後的故事內容，不要附加其他說明。<|eot_id|><|start_header_id|>assistant<|end_header_id|>`,
-            "stream": false,
-            "options": {
-                "num_ctx": 700,
-                "num_predict": 100,
-            },
-        };
-        const story_2nd = yield (0, exports.LLMGenChat)(payload2);
+        // 第二次生成(openai)
+        const prompt = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請修改並優化以下故事：${story_1st}，使其更生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段。只需返回修改後的故事內容，不要附加其他說明。`;
+        const story_2nd = yield (0, openai_fetch_1.openAIFetch)(prompt);
         const converter = opencc_js_1.default.Converter({ from: 'cn', to: 'tw' });
         const transStory = converter(story_2nd);
         if (transStory !== "") {

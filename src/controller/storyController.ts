@@ -9,6 +9,7 @@ import { isObjectValid, generateStory } from "../utils/tools/tool";
 import PQueue from 'p-queue';
 import fs from "fs";
 import path from 'path';  
+import { openAIFetch } from "../utils/tools/openai_fetch";
 
 
 export class StoryController extends Controller {
@@ -17,7 +18,9 @@ export class StoryController extends Controller {
   public test(Request: Request, Response: Response) {
     Response.send(`this is STORY get, use post in this url is FINE !`);
   }
-  
+  public async testOpenaiApi(Request: Request, Response: Response){
+    await openAIFetch("who are you?");
+  } 
   // 拿單一本書的資訊並回傳
   public async StartStory(Request:Request, Response:Response){
     const { storyId } = Request.body;

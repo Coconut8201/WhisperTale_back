@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
-import { GenerateRequest, Ollama } from "ollama";
+import { openAIFetch } from './openai_fetch';
 import { LLMGen_release } from "./LLMapi";
-dotenv.config();
-
+dotenv.config(); 
 /**
  * 更改sd option，使用想要的模型生成圖片
  * @param MODEL_NAME 要使用的sd 模型名稱
@@ -43,14 +42,10 @@ export const getSDModelList = async () => {
    }
 }
 
-export const GenImg_prompt_En = async (story_slice: string):Promise<string> =>{
-   const ollama = new Ollama({ host: process.env.LLM_generate_api });
+export const GenImg_prompt_En = async (story_slice: string): Promise<string> => {
    const controller = new AbortController();
-   const timeoutId = setTimeout(()=>controller.abort(), 25000);
-
-   let payload: any = {
-      "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-      "prompt": `
+   const timeoutId = setTimeout(() => controller.abort(), 25000);
+   const prompt: string = `
             I want you to help me make english requests (prompts) for the Stable Diffusion neural network, use English to generate prompt.
             Stable diffusion is a text-based image generation model that can create diverse and high-quality images based on your requests. In order to get the best results from Stable diffusion, you need to follow some guidelines when composing prompts.
             Here are some tips for writing prompts for Stable diffusion1:
@@ -111,8 +106,6 @@ export const GenImg_prompt_En = async (story_slice: string):Promise<string> =>{
             Your Response -> "A group of climbing students marveling at a magnificent lake, watercolor style, the students are standing on the mountain top with astonished expressions, eyes wide, mouths slightly open, pointing towards the lake, some students with hands on their knees, breathing heavily but excitedly, the lake is clear and blue, surrounded by lush green mountains and dense forests, a few clouds floating in the sky, soft sunlight reflecting on the lake surface, the background is a vast natural landscape, the overall scene is fresh and magnificent."
 
 
-
-
             Another way to adjust the strength of a keyword is to use () and []. (keyword) increases the strength of the keyword by 1.1 times and is equivalent to (keyword:1.1). [keyword] reduces the strength of the keyword by 0.9 times and corresponds to (keyword:0.9).
 
             You can use several of them, as in algebra... The effect is multiplicative.
@@ -140,26 +133,16 @@ export const GenImg_prompt_En = async (story_slice: string):Promise<string> =>{
             Don't add your comments, but answer right away.
             I repeat, do not include Chinese in your response, whether it is traditional or simplified Chinese. I only need English. I repeat, I only need English!!! I don't want anything else, I only want English!!!! This is very important. Attention! Your answer can only be in English. If any language other than English appears, it is illegal, and I will fine you.
             
-            My first request is - "{${story_slice}}".`,
-      "stream": false,
-      "options":{
-         "num_ctx": 200,
-         "num_predict": 50,
-      },
-   };
-
+            My first request is - "{${story_slice}}".`;
    try {
-      const ollamaRequest: GenerateRequest & { stream: false } = { ...payload, stream: false, signal: controller.signal };
-      const response = await ollama.generate(ollamaRequest);
+      const response = await openAIFetch(prompt);
       clearTimeout(timeoutId);
-      let string_response = response.response;
-      return string_response;
-   } catch (error:any) {
-      if (error.name === 'AbortError'){
-         // throw new Error(`Request timed out after ${15} seconds`);
-         console.error(`GenImg_prompt_En Request timed out after ${20} seconds error: ${error}`);
+      return response || "";
+   } catch (error: any) {
+      if (error.name === 'AbortError') {
+         console.error(`GenImg_prompt_En Request timed out after 25 seconds error: ${error}`);
          await LLMGen_release();
-      }else{
+      } else {
          console.error(`GenImg_prompt_En fail: ${error}`);
          throw error;
       }

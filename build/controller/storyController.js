@@ -21,6 +21,7 @@ const tool_1 = require("../utils/tools/tool");
 const p_queue_1 = __importDefault(require("p-queue"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const openai_fetch_1 = require("../utils/tools/openai_fetch");
 class StoryController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
@@ -87,6 +88,11 @@ class StoryController extends Controller_1.Controller {
     }
     test(Request, Response) {
         Response.send(`this is STORY get, use post in this url is FINE !`);
+    }
+    testOpenaiApi(Request, Response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield (0, openai_fetch_1.openAIFetch)("who are you?");
+        });
     }
     // 拿單一本書的資訊並回傳
     StartStory(Request, Response) {

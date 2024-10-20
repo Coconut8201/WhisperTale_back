@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenImg_prompt_En_array = exports.GenImg_prompt_En = exports.getSDModelList = exports.sdModelOption = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
-const ollama_1 = require("ollama");
+const openai_fetch_1 = require("./openai_fetch");
 const LLMapi_1 = require("./LLMapi");
 dotenv_1.default.config();
 /**
@@ -59,12 +59,9 @@ const getSDModelList = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.getSDModelList = getSDModelList;
 const GenImg_prompt_En = (story_slice) => __awaiter(void 0, void 0, void 0, function* () {
-    const ollama = new ollama_1.Ollama({ host: process.env.LLM_generate_api });
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 25000);
-    let payload = {
-        "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-        "prompt": `
+    const prompt = `
             I want you to help me make english requests (prompts) for the Stable Diffusion neural network, use English to generate prompt.
             Stable diffusion is a text-based image generation model that can create diverse and high-quality images based on your requests. In order to get the best results from Stable diffusion, you need to follow some guidelines when composing prompts.
             Here are some tips for writing prompts for Stable diffusion1:
@@ -125,8 +122,6 @@ const GenImg_prompt_En = (story_slice) => __awaiter(void 0, void 0, void 0, func
             Your Response -> "A group of climbing students marveling at a magnificent lake, watercolor style, the students are standing on the mountain top with astonished expressions, eyes wide, mouths slightly open, pointing towards the lake, some students with hands on their knees, breathing heavily but excitedly, the lake is clear and blue, surrounded by lush green mountains and dense forests, a few clouds floating in the sky, soft sunlight reflecting on the lake surface, the background is a vast natural landscape, the overall scene is fresh and magnificent."
 
 
-
-
             Another way to adjust the strength of a keyword is to use () and []. (keyword) increases the strength of the keyword by 1.1 times and is equivalent to (keyword:1.1). [keyword] reduces the strength of the keyword by 0.9 times and corresponds to (keyword:0.9).
 
             You can use several of them, as in algebra... The effect is multiplicative.
@@ -154,24 +149,15 @@ const GenImg_prompt_En = (story_slice) => __awaiter(void 0, void 0, void 0, func
             Don't add your comments, but answer right away.
             I repeat, do not include Chinese in your response, whether it is traditional or simplified Chinese. I only need English. I repeat, I only need English!!! I don't want anything else, I only want English!!!! This is very important. Attention! Your answer can only be in English. If any language other than English appears, it is illegal, and I will fine you.
             
-            My first request is - "{${story_slice}}".`,
-        "stream": false,
-        "options": {
-            "num_ctx": 200,
-            "num_predict": 50,
-        },
-    };
+            My first request is - "{${story_slice}}".`;
     try {
-        const ollamaRequest = Object.assign(Object.assign({}, payload), { stream: false, signal: controller.signal });
-        const response = yield ollama.generate(ollamaRequest);
+        const response = yield (0, openai_fetch_1.openAIFetch)(prompt);
         clearTimeout(timeoutId);
-        let string_response = response.response;
-        return string_response;
+        return response || "";
     }
     catch (error) {
         if (error.name === 'AbortError') {
-            // throw new Error(`Request timed out after ${15} seconds`);
-            console.error(`GenImg_prompt_En Request timed out after ${20} seconds error: ${error}`);
+            console.error(`GenImg_prompt_En Request timed out after 25 seconds error: ${error}`);
             yield (0, LLMapi_1.LLMGen_release)();
         }
         else {

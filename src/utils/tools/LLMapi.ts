@@ -5,6 +5,8 @@ import OpenCC from 'opencc-js';
 import { Ollama, GenerateRequest } from 'ollama'
 
 import dotenv from 'dotenv';
+import OpenAI from "openai";
+import { openAIFetch } from "./openai_fetch";
 
 dotenv.config();
 
@@ -66,6 +68,7 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
                 故事主角: ${storyRoleForm.mainCharacter}
                 其他角色: ${storyRoleForm.otherCharacters} 
                 故事情節: ${storyRoleForm.description}
+                其他角色設定: ${storyRoleForm.relationships}
 
                 要求:
                 1. 故事總字數控制在700字左右
@@ -74,6 +77,7 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
                 4. 故事內容要充實有趣,符合小朋友的理解能力
                 5. 角色對話要生動自然,符合故事情境
                 6. 只輸出故事內容,不要包含任何額外說明
+                7. 故事段落用 \n\n 換行
 
                 請發揮你的創意,為小朋友們創作一個精彩的故事!
 
@@ -88,20 +92,17 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
                 "num_predict": 100,
             },
         }
-        const story_1st = await LLMGenChat(payload1);
+        const story_1st:string = await LLMGenChat(payload1);
 
-        // 第二次生成
-        let payload2 = {
-            "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-            // "model": "Whispertales_model_v4.gguf:latest",
-            "prompt": `<|begin_of_text|><|start_header_id|>system<|end_header_id|>你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。<|eot_id|><|start_header_id|>user<|end_header_id|>請修改並優化以下故事：${story_1st}，使其更生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段。只需返回修改後的故事內容，不要附加其他說明。<|eot_id|><|start_header_id|>assistant<|end_header_id|>`,
-            "stream": false,
-            "options":{
-                "num_ctx": 700, // num_ctx num_predict
-                "num_predict": 100,
-            },
-        };
-        const story_2nd:string = await LLMGenChat(payload2);
+        // 第二次生成(openai)
+        const prompt = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請參考根據故事設定：
+                故事主角: ${storyRoleForm.mainCharacter}
+                其他角色: ${storyRoleForm.otherCharacters} 
+                故事情節: ${storyRoleForm.description}
+                其他角色設定: ${storyRoleForm.relationships}
+                寫出的故事${story_1st}
+                進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落麻煩用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:a段落故事\n\nb段落故事\n\n.....`;
+        const story_2nd:string = await openAIFetch(prompt);
 
         const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
         const transStory: string = converter(story_2nd);

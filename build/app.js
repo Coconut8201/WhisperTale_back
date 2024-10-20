@@ -19,8 +19,10 @@ const DB = new DataBase_1.DataBase(process.env.mongoDB_api);
 //系統伺服器
 const corsOptions = {
     origin: [
+        'https://localhost:3151',
         'http://localhost:3151',
-        'http://163.13.202.120:3151', //use front     
+        'http://163.13.202.120:3151',
+        'https://163.13.202.120:3151', //use front     
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: ['Content-Type'],
@@ -33,10 +35,10 @@ for (const route of Routers_1.router) {
 }
 //=============================================
 // //dev 開發
-// app.listen(port, () => {
-//     console.log(`Server: http://127.0.0.1:${port}/user`)
-// });
-//use 使用
-app.listen(port, ip, () => {
-    console.log(`Server: http://${ip}:${port}/user`);
+app.listen(port, () => {
+    console.log(`Server: http://127.0.0.1:${port}/user`);
 });
+// //use 使用
+// app.listen(port, ip,() => {
+//     console.log(`Server: http://${ip}:${port}/user`)
+// });

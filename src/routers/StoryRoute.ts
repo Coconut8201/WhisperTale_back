@@ -13,6 +13,7 @@ export class StoryRoute extends Route{
    // http://localhost:7943/story
    protected setRoutes(): void {
       this.router.get(`${this.url}`, this.Controller.test);
+      this.router.get(`${this.url}/ta`, this.Controller.testOpenaiApi);
       this.router.post(`${this.url}/startstory`, this.Controller.StartStory);
       this.router.get(`${this.url}/getstorylist_fdb`, this.Controller.GetStorylistFDB);
       this.router.post(`${this.url}/llm/genstory`, this.Controller.LLMGenStory);
