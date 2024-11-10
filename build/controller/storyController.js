@@ -43,13 +43,14 @@ class StoryController extends Controller_1.Controller {
                     success: false
                 });
             }
+            const userId = Request.user.id;
             let storyRoleForm = Request.body.roleform;
             let voiceModelName = Request.body.voiceModelName;
             console.log(`Request.body = ${JSON.stringify(Request.body)}`); // 傳入的角色設定
             const MODEL_NAME = storyRoleForm.style;
             yield (0, LLM_fetch_images_1.sdModelOption)(MODEL_NAME);
             try {
-                const result = yield this.queue.add(() => (0, tool_1.generateStory)(storyRoleForm, voiceModelName));
+                const result = yield this.queue.add(() => (0, tool_1.generateStory)(storyRoleForm, voiceModelName, userId));
                 let return_playload = {
                     success: true,
                     storyId: result

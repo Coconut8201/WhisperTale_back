@@ -55,7 +55,7 @@ export declare let generated_story_array:string[];
  * @param {Response} Response 回應status code，不回傳其他東西
  * @return {Object<string>} Saved_storyID 剛儲存好故事的唯一id
  */
-export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Response:any) =>{
+export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Response:any, userId: string) =>{
     let storyInfo = storyRoleForm.description;
     try {
         let payload1: object = {
@@ -106,14 +106,21 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
         const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
         const transStory: string = converter(story_2nd);
         
-        if (transStory !== "") {
-            generated_story_array = transStory.split("\n\n");
-            console.log(`generated_story_arrayAA.length = ${generated_story_array.length}`);
-            let Saved_storyID = await DataBase.SaveNewStory_returnID(transStory, storyInfo);
-            return Saved_storyID;
-        }else{
-            throw new Error('Generated story is empty');
+        if (transStory === "") {
+            throw new Error('生成的故事內容為空');
         }
+
+        generated_story_array = transStory.split("\n\n");
+        console.log(`生成的故事段落數量: ${generated_story_array.length}`);
+        
+        const Saved_storyID = await DataBase.SaveNewStory_returnID(transStory, storyInfo);
+        const saveResult = await DataBase.saveNewBookId(Saved_storyID, userId);
+        
+        if (!saveResult.success) {
+            throw new Error('儲存故事時發生錯誤');
+        }
+        
+        return Saved_storyID;
     } catch (error) {
         console.error(`Error in LLMGenStory_1st_2nd: ${error}`);
         throw error;

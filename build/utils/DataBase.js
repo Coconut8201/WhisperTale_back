@@ -27,11 +27,10 @@ class DataBase {
             this.DB = yield (0, mongoose_1.connect)(url);
         });
     }
-    static SaveNewStory_returnID(storyTale, storyInfo, userToken) {
+    static SaveNewStory_returnID(storyTale, storyInfo) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const newstory = new storyModel_1.storyModel({
-                    userToken: userToken,
                     storyTale: storyTale,
                     storyInfo: storyInfo,
                     is_favorite: false,
@@ -265,6 +264,31 @@ class DataBase {
             catch (e) {
                 console.error(`更新用戶資料失敗: ${e.message}`);
                 throw e;
+            }
+        });
+    }
+    static saveNewBookId(storyId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // 將 storyId 轉換為字串
+                const storyIdString = storyId.toString();
+                const user = yield userModel_1.userModel.findByIdAndUpdate(userId, { $push: { booklist: storyIdString } }, { new: true });
+                if (!user) {
+                    return {
+                        success: false,
+                        message: '找不到用戶'
+                    };
+                }
+                return {
+                    success: true
+                };
+            }
+            catch (e) {
+                console.error(`添加書本ID失敗: ${e.message}`);
+                return {
+                    success: false,
+                    message: `添加書本ID失敗: ${e.message}`
+                };
             }
         });
     }

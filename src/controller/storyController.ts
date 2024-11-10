@@ -63,6 +63,7 @@ export class StoryController extends Controller {
       });
     }
 
+    const userId = (Request as any).user.id;
     let storyRoleForm: RoleFormInterface = Request.body.roleform;
     let voiceModelName: string = Request.body.voiceModelName;
 
@@ -71,7 +72,7 @@ export class StoryController extends Controller {
     await sdModelOption(MODEL_NAME);
 
     try {
-        const result:string = await this.queue.add(() => generateStory(storyRoleForm, voiceModelName));
+        const result:string = await this.queue.add(() => generateStory(storyRoleForm, voiceModelName, userId));
         let return_playload = {
           success: true,
           storyId: result

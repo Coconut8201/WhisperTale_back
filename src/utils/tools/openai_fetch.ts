@@ -12,7 +12,6 @@ export async function openAIFetch(message: string) {
         model: 'gpt-4',
         messages: [{ role: 'user', content: message }],
     });
-    console.log(completion.choices[0]?.message?.content);
     return completion.choices[0]?.message?.content ?? "";
     // // Streaming:
     // const stream = await openai.chat.completions.create({

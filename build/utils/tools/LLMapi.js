@@ -63,7 +63,7 @@ exports.LLMGenChat = LLMGenChat;
  * @param {Response} Response 回應status code，不回傳其他東西
  * @return {Object<string>} Saved_storyID 剛儲存好故事的唯一id
  */
-const LLMGenStory_1st_2nd = (storyRoleForm, Response) => __awaiter(void 0, void 0, void 0, function* () {
+const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 0, void 0, void 0, function* () {
     let storyInfo = storyRoleForm.description;
     try {
         let payload1 = {
@@ -111,15 +111,17 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response) => __awaiter(void 0, void 
         const story_2nd = yield (0, openai_fetch_1.openAIFetch)(prompt);
         const converter = opencc_js_1.default.Converter({ from: 'cn', to: 'tw' });
         const transStory = converter(story_2nd);
-        if (transStory !== "") {
-            exports.generated_story_array = transStory.split("\n\n");
-            console.log(`generated_story_arrayAA.length = ${exports.generated_story_array.length}`);
-            let Saved_storyID = yield DataBase_1.DataBase.SaveNewStory_returnID(transStory, storyInfo);
-            return Saved_storyID;
+        if (transStory === "") {
+            throw new Error('生成的故事內容為空');
         }
-        else {
-            throw new Error('Generated story is empty');
+        exports.generated_story_array = transStory.split("\n\n");
+        console.log(`生成的故事段落數量: ${exports.generated_story_array.length}`);
+        const Saved_storyID = yield DataBase_1.DataBase.SaveNewStory_returnID(transStory, storyInfo);
+        const saveResult = yield DataBase_1.DataBase.saveNewBookId(Saved_storyID, userId);
+        if (!saveResult.success) {
+            throw new Error('儲存故事時發生錯誤');
         }
+        return Saved_storyID;
     }
     catch (error) {
         console.error(`Error in LLMGenStory_1st_2nd: ${error}`);

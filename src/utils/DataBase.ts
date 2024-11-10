@@ -17,10 +17,9 @@ export class DataBase{
         this.DB = await connect(url)
     }
 
-    static async SaveNewStory_returnID(storyTale: string, storyInfo: string, userToken:string):Promise<any>{
+    static async SaveNewStory_returnID(storyTale: string, storyInfo: string):Promise<any>{
         try{
             const newstory = new storyModel({
-                userToken: userToken,
                 storyTale: storyTale,
                 storyInfo: storyInfo,   
                 is_favorite:false,    
@@ -258,6 +257,36 @@ export class DataBase{
         } catch (e: any) {
             console.error(`更新用戶資料失敗: ${e.message}`);
             throw e;
+        }
+    }
+
+    public static async saveNewBookId(storyId: string, userId: string) {
+        try {
+            // 將 storyId 轉換為字串
+            const storyIdString = storyId.toString();
+            
+            const user = await userModel.findByIdAndUpdate(
+                userId,
+                { $push: { booklist: storyIdString } },
+                { new: true }
+            );
+
+            if (!user) {
+                return {
+                    success: false,
+                    message: '找不到用戶'
+                };
+            }
+
+            return {
+                success: true
+            };
+        } catch (e: any) {
+            console.error(`添加書本ID失敗: ${e.message}`);
+            return {
+                success: false,
+                message: `添加書本ID失敗: ${e.message}`
+            };
         }
     }
 }
