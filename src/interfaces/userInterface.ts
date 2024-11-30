@@ -4,4 +4,5 @@ export interface userInterface {
     userName: string,
     userPassword: string,
     booklist: Array<string>, //僅存放stories 的id
+    voiceList: Array<string>,
 }

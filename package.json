@@ -19,6 +19,7 @@
     "axios": "^1.4.0",
     "chatgpt": "^5.2.5",
     "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "currently": "^0.0.8",
     "dotenv": "^16.3.1",

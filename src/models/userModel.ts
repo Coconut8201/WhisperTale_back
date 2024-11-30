@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     nickname: { type: String },
     phone: { type: String },
     avatar: { type: String },
-    booklist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }]
+    booklist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
+    voiceList: [{ type: String }],
 }, {
     timestamps: true
 });

@@ -12,7 +12,8 @@ const userSchema = new mongoose_1.default.Schema({
     nickname: { type: String },
     phone: { type: String },
     avatar: { type: String },
-    booklist: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Story' }]
+    booklist: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Story' }],
+    voiceList: [{ type: String }],
 }, {
     timestamps: true
 });
