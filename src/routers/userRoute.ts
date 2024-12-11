@@ -13,8 +13,9 @@ export class UserRoute extends Route {
         this.setRoutes();
     }
 
-    //http://localhost:7943/user
+    // http://localhost:7943/user
     // http://localhost:7943/user/logout
+    // http://localhost:7943/user/verify-auth
     protected setRoutes(): void {
         this.router.get(`${this.url}`,this.Controller.test);
         this.router.post(`${this.url}/login`, this.Controller.Login);

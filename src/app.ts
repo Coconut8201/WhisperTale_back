@@ -16,18 +16,42 @@ const DB = new DataBase(process.env.mongoDB_api!);
 
 //系統伺服器
 const corsOptions = {
-    origin: [
-        'https://localhost:3151', //dev front https
-        'http://localhost:3151', //dev front 
-        'http://163.13.202.128:3151', //use front     
-        'https://163.13.202.128:3151', //use front     
-    ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        const allowedOrigins = [
+            'https://163.13.202.128',
+            'http://163.13.202.128:3151',
+            'https://163.13.202.128:3151'
+        ];
+        
+        // 允許來自允許列表的請求
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
-    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'Cookie',
+        'X-Requested-With'
+    ],
     exposedHeaders: ['Set-Cookie'],
+    maxAge: 86400,
+    optionsSuccessStatus: 200
 };
+
+// app.use((req, res, next) => {
+//     console.log('請求詳情:', {
+//         url: req.url,
+//         method: req.method,
+//         origin: req.headers.origin,
+//         cookie: req.headers.cookie
+//     });
+//     next();
+// });
 
 app.use(cors(corsOptions));
 app.use(cookieParser());

@@ -4,6 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import { trainVoice } from "../utils/tools/trainVoiceModel";
 import { setVoiceModel, whisperCall } from "../utils/tools/fetch";
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class VoiceController extends Controller{
     public test(Request:Request, Response:Response){
@@ -53,7 +55,7 @@ export class VoiceController extends Controller{
 
     public async getVoiceList(req: Request, res: Response) {
         try {
-            const directoryPath = '/home/b310-21/projects/GPT-SoVITS/logs';
+            const directoryPath = process.env.VoiceListPath!;
             const entries = await fs.promises.readdir(directoryPath, { withFileTypes: true });
             const directories = entries
                 .filter(entry => entry.isDirectory())

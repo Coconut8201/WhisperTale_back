@@ -32,17 +32,17 @@ export class UserController extends Controller{
                 // 設置 cookie
                 res.cookie('authToken', token, {
                     httpOnly: true,
-                    secure: false,  // 開發環境使用 http
-                    sameSite: 'lax',
+                    secure: true,
+                    sameSite: 'none',
                     path: '/',
-                    maxAge: 24 * 60 * 60 * 1000  // 24小時
+                    maxAge: 24 * 60 * 60 * 1000
                 });
 
                 // 調試日誌
-                console.log('===== Cookie 設置信息 =====');
-                console.log('Token 已生成:', token);
-                console.log('Cookie 已設置:', res.getHeader('Set-Cookie'));
-                console.log('==========================');
+                // console.log('===== Cookie 設置信息 =====');
+                // console.log('Token 已生成:', token);
+                // console.log('Cookie 已設置:', res.getHeader('Set-Cookie'));
+                // console.log('==========================');
 
                 // 響應中不返回 token
                 return res.status(200).json({ 

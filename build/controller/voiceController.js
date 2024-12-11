@@ -18,6 +18,8 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const trainVoiceModel_1 = require("../utils/tools/trainVoiceModel");
 const fetch_1 = require("../utils/tools/fetch");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 class VoiceController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
@@ -67,7 +69,7 @@ class VoiceController extends Controller_1.Controller {
     getVoiceList(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const directoryPath = '/home/b310-21/projects/GPT-SoVITS/logs';
+                const directoryPath = process.env.VoiceListPath;
                 const entries = yield fs_1.default.promises.readdir(directoryPath, { withFileTypes: true });
                 const directories = entries
                     .filter(entry => entry.isDirectory())
