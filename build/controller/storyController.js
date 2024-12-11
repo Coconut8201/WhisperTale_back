@@ -44,6 +44,7 @@ class StoryController extends Controller_1.Controller {
                 });
             }
             const userId = Request.user.id;
+            console.log(`userid: ${userId}`);
             let storyRoleForm = Request.body.roleform;
             let voiceModelName = Request.body.voiceModelName;
             console.log(`Request.body = ${JSON.stringify(Request.body)}`); // 傳入的角色設定

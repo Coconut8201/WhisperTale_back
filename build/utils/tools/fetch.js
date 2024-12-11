@@ -93,7 +93,7 @@ const fetchImage = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.fetchImage = fetchImage;
 // 拿語音內容
-const getVoices = (Saved_storyID, storyTale, voiceModelName) => __awaiter(void 0, void 0, void 0, function* () {
+const getVoices = (Saved_storyID, storyTale) => __awaiter(void 0, void 0, void 0, function* () {
     const url = `${process.env.GPT_SOVITS_VOICE_API}/tts`;
     const referPathDir = `/home/b310-21/projects/GPT-SoVITS/output/slicer_opt/${voiceModelName}`;
     // 獲取排序後的第一個檔案

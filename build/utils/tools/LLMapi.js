@@ -18,7 +18,6 @@ const child_process_1 = require("child_process");
 const opencc_js_1 = __importDefault(require("opencc-js"));
 const ollama_1 = require("ollama");
 const dotenv_1 = __importDefault(require("dotenv"));
-const openai_fetch_1 = require("./openai_fetch");
 dotenv_1.default.config();
 //向 LLM 送一次對話請求
 /**
@@ -66,17 +65,40 @@ exports.LLMGenChat = LLMGenChat;
 const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 0, void 0, void 0, function* () {
     let storyInfo = storyRoleForm.description;
     try {
-        let payload1 = {
-            "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-            "prompt": `
-                <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-                你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求創作一個故事:
-
+        // let payload1: object = {
+        //     "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
+        //     "prompt": `
+        //         <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+        //         你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求創作一個故事:
+        //         故事主角: ${storyRoleForm.mainCharacter}
+        //         其他角色: ${storyRoleForm.otherCharacters} 
+        //         故事情節: ${storyRoleForm.description}
+        //         其他角色設定: ${storyRoleForm.relationships}
+        //         要求:
+        //         1. 故事總字數控制在700字左右
+        //         2. 每40個字換一次行
+        //         3. 全文分為10-12個段落
+        //         4. 故事內容要充實有趣,符合小朋友的理解能力
+        //         5. 角色對話要生動自然,符合故事情境
+        //         6. 只輸出故事內容,不要包含任何額外說明
+        //         7. 故事段落用 \n\n 換行
+        //         請發揮你的創意,為小朋友們創作一個精彩的故事!
+        //         <|eot_id|><|start_header_id|>user<|end_header_id|>
+        //         請根據上述要求創作一個適合兒童的故事。
+        //         <|eot_id|><|start_header_id|>assistant<|end_header_id|>`,
+        //     "stream": false,
+        //     "options":{
+        //         "num_ctx": 700,
+        //         "num_predict": 100,
+        //     },
+        // }
+        // const story_1st:string = await LLMGenChat(payload1);
+        // 第一次生成(openai)
+        const prompt = `你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求創作一個故事:
                 故事主角: ${storyRoleForm.mainCharacter}
                 其他角色: ${storyRoleForm.otherCharacters} 
                 故事情節: ${storyRoleForm.description}
                 其他角色設定: ${storyRoleForm.relationships}
-
                 要求:
                 1. 故事總字數控制在700字左右
                 2. 每40個字換一次行
@@ -85,31 +107,43 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
                 5. 角色對話要生動自然,符合故事情境
                 6. 只輸出故事內容,不要包含任何額外說明
                 7. 故事段落用 \n\n 換行
-
                 請發揮你的創意,為小朋友們創作一個精彩的故事!
-
-                <|eot_id|><|start_header_id|>user<|end_header_id|>
-
-                請根據上述要求創作一個適合兒童的故事。
-
-                <|eot_id|><|start_header_id|>assistant<|end_header_id|>`,
-            "stream": false,
-            "options": {
-                "num_ctx": 700,
-                "num_predict": 100,
-            },
-        };
-        const story_1st = yield (0, exports.LLMGenChat)(payload1);
+                請根據上述要求創作一個適合兒童的故事。`;
+        //! 這邊要取消註解        
+        // const story_1st:string = await openAIFetch(prompt);
         // 第二次生成(openai)
-        const prompt = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請參考根據故事設定：
-                故事主角: ${storyRoleForm.mainCharacter}
-                其他角色: ${storyRoleForm.otherCharacters} 
-                故事情節: ${storyRoleForm.description}
-                其他角色設定: ${storyRoleForm.relationships}
-                寫出的故事${story_1st}
-                進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落麻煩用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:a段落故事\n\nb段落故事\n\n.....`;
-        const story_2nd = yield (0, openai_fetch_1.openAIFetch)(prompt);
-        const converter = opencc_js_1.default.Converter({ from: 'cn', to: 'tw' });
+        // const prompt2 = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請參考根據故事設定：
+        //         故事主角: ${storyRoleForm.mainCharacter}
+        //         其他角色: ${storyRoleForm.otherCharacters} 
+        //         故事情節: ${storyRoleForm.description}
+        //         其他角色設定: ${storyRoleForm.relationships}
+        //         寫出的故事${story_1st}
+        //         進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落麻煩用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:a段落故事\n\nb段落故事\n\n.....`;
+        //! 這邊要取消註解  
+        // const story_2nd:string = await openAIFetch(prompt2);
+        const story_2nd = `在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。
+
+某一天，一隻活潑可愛的小狗狗汪汪蹦蹦跳跳地來到公園。牠看見角落裡的小花，搖著尾巴走了過去：「嗨！我叫小汪，你為什麼一個人坐在這裡呀？」
+
+小花低下頭，小聲地說：「我...我不太會和別人玩...」
+
+「沒關係啊！」小汪笑著說，「要不要和我一起去吃冰淇淋？公園對面新開了一家好好吃的冰淇淋店喔！」
+
+就這樣，小花和小汪成為了好朋友。他們常常一起去看動畫電影，一起在公園裡追逐蝴蝶，一起分享好吃的點心。
+
+雖然小花有時候還是會害羞，會擔心自己配不上這麼好的朋友，但小汪總是很貼心地對小花說：「你是最好的朋友！」
+
+有一天，小汪興奮地跑來找小花：「小花小花！我好想去看看你住的地方！一定很漂亮吧？」
+
+小花想了想，雖然有點緊張，但還是決定帶小汪去參觀自己溫暖的小屋。小屋裡有小花最喜歡的毛線球收藏，還有媽媽親手織的小毯子。
+
+小汪參觀了小花的家，開心地說：「哇！你的家好溫馨啊！」看到小汪真誠的笑容，小花感到非常幸福。
+
+從此以後，小花知道了：不要因為害羞就把自己關起來，因為世界上總有一個人，會真心喜歡真實的你。即使你覺得自己不夠好，在真正的朋友眼中，你永遠都是最特別的。
+
+每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。`;
+        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
+        const converter = opencc_js_1.default.Converter({ from: 'tw', to: 'cn' });
         const transStory = converter(story_2nd);
         if (transStory === "") {
             throw new Error('生成的故事內容為空');
@@ -121,7 +155,9 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
         if (!saveResult.success) {
             throw new Error('儲存故事時發生錯誤');
         }
-        return Saved_storyID;
+        //! 這邊取消註解
+        // return Saved_storyID;
+        return '6759b1752ada2b6675270d17';
     }
     catch (error) {
         console.error(`Error in LLMGenStory_1st_2nd: ${error}`);

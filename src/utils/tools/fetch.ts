@@ -84,7 +84,7 @@ export const fetchImage = async (payload:Object) => {
 };
 
 // 拿語音內容
-export const getVoices = async (Saved_storyID: string, storyTale: string, voiceModelName:string): Promise<{ audioFileName: string, audioBuffer: ArrayBuffer, error?: string }> => {
+export const getVoices = async (Saved_storyID: string, storyTale: string): Promise<{ audioFileName: string, audioBuffer: ArrayBuffer, error?: string }> => {
     const url = `${process.env.GPT_SOVITS_VOICE_API}/tts`;
     const referPathDir = `/home/b310-21/projects/GPT-SoVITS/output/slicer_opt/${voiceModelName}`
     

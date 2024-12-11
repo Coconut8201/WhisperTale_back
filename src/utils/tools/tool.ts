@@ -31,11 +31,9 @@ export const CurrentTime = () =>{
     return formattedTime;
 }
 
-export const GenVoice = async (storyId:string, storyTale:string,voiceModelName:string) => {
+export const GenVoice = async (storyId:string, storyTale:string) => {
     try {
-        await setVoiceModel(voiceModelName); // 設定語音模型
-
-        const { audioFileName, audioBuffer } = await getVoices(storyId, storyTale, voiceModelName);
+        const { audioFileName, audioBuffer } = await getVoices(storyId, storyTale);
         const filePath = path.join(process.env.dev_saveAudio!, audioFileName);
         await fs.writeFile(filePath, Buffer.from(audioBuffer));
         
@@ -79,24 +77,34 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
 
         await delayedExecution();
 
-        console.log(`start GenImagePrompt\n`);
-        await GenImagePrompt(generated_story_array || [], Saved_storyID);
-        await LLMGen_release(); // 清除Ollama model 占用記憶體
+        //! 這邊取消註解
+        // console.log(`start GenImagePrompt\n`);
+        // await GenImagePrompt(generated_story_array || [], Saved_storyID);
+        // await LLMGen_release(); // 清除Ollama model 占用記憶體
 
-        // Fetch the updated story data to get the generated image prompts
-        const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);
-        const generated_story_image_prompt = updatedStory.image_prompt;
+        // // Fetch the updated story data to get the generated image prompts
+        // const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);
+        // const generated_story_image_prompt = updatedStory.image_prompt;
 
-        if (!generated_story_image_prompt || generated_story_image_prompt.length === 0) {
-            throw new Error('No image prompts generated，圖片提示生成失敗');
-        }
-        console.log(`start GenImage`);
-        await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
+        // if (!generated_story_image_prompt || generated_story_image_prompt.length === 0) {
+        //     throw new Error('No image prompts generated，圖片提示生成失敗');
+        // }
+        // console.log(`start GenImage`);
+        // await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
 
-        console.log(`start getVoices`);
-        const joinedStory = generated_story_array.join(", ");
+        // console.log(`start getVoices`);
+        const joinedStory = generated_story_array.reduce((acc: string[], curr: string, i: number) => {
+            if (i % 2 === 0) {
+                if (i + 1 < generated_story_array.length) {
+                    acc.push(generated_story_array[i] + generated_story_array[i + 1]);
+                } else {
+                    acc.push(curr);
+                }
+            }
+            return acc;
+        }, []);
         await GenVoice(Saved_storyID, joinedStory, voiceModelName);
-        console.log(`story generate finish !!`);
+        // console.log(`story generate finish !!`);
         return Saved_storyID;
     } catch (error: any) {
         console.error(`Error generating story: ${error.message}`);

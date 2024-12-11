@@ -16,7 +16,6 @@ exports.VoiceController = void 0;
 const Controller_1 = require("../interfaces/Controller");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const trainVoiceModel_1 = require("../utils/tools/trainVoiceModel");
 const fetch_1 = require("../utils/tools/fetch");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -24,27 +23,34 @@ class VoiceController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
         this.UploadVoice = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (!req.file) {
                 return res.status(400).send("No file uploaded.");
             }
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+            if (!userId) {
+                return res.status(401).send("未授權的訪問");
+            }
             const file = req.file;
-            const filePath = process.env.dev_saveRecording; // 存放使用者聲音的目錄
             const audioName = req.body.audioName;
+            const filePath = process.env.dev_saveRecording + `/${userId}/${audioName}`; // 存放使用者聲音的目錄
+            yield fs_1.default.promises.mkdir(filePath, { recursive: true });
             const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
-            try {
-                fs_1.default.rename(file.path, fullPath, (err) => {
-                    if (err) {
-                        console.error(`Error saving file: ${err.message}`);
-                        return res.status(500).send("Error saving file.");
-                    }
-                    console.log(`File ${audioName} saved successfully in ${filePath}`);
-                });
-                yield (0, trainVoiceModel_1.trainVoice)(audioName);
-                res.send({ code: 200, message: "train voice model success" });
-            }
-            catch (err) {
-                res.send({ code: 500, message: err.message });
-            }
+            //! 這邊註解要解
+            //TODO 解決生成聲音的問題
+            // try{
+            //     fs.rename(file.path, fullPath, (err) => {
+            //         if (err) {
+            //             console.error(`Error saving file: ${err.message}`);
+            //             return res.status(500).send("Error saving file.");
+            //         }
+            //         console.log(`File ${audioName} saved successfully in ${filePath}`);
+            //     });
+            //     await trainVoice(audioName);
+            //     res.send({code:200, message: "train voice model success"})
+            // } catch(err:any){
+            //     res.send({code: 500, message: err.message});
+            // }
         });
     }
     test(Request, Response) {

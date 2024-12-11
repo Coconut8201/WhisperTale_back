@@ -64,6 +64,7 @@ export class StoryController extends Controller {
     }
 
     const userId = (Request as any).user.id;
+    console.log(`userid: ${userId}`)
     let storyRoleForm: RoleFormInterface = Request.body.roleform;
     let voiceModelName: string = Request.body.voiceModelName;
 

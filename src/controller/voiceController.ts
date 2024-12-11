@@ -16,27 +16,34 @@ export class VoiceController extends Controller{
         if (!req.file) {
             return res.status(400).send("No file uploaded.");
         }
-
+        const userId = (req as any).user?.id;
+        if (!userId) {
+            return res.status(401).send("未授權的訪問");
+        }
+        
         const file = req.file;
-        const filePath = process.env.dev_saveRecording!; // 存放使用者聲音的目錄
         const audioName = req.body.audioName;
+        const filePath = process.env.dev_saveRecording! + `/${userId}/${audioName}`; // 存放使用者聲音的目錄
+        await fs.promises.mkdir(filePath, { recursive: true });
         const fullPath = path.join(filePath, `${audioName}.wav`);
 
-        try{
-            fs.rename(file.path, fullPath, (err) => {
-                if (err) {
-                    console.error(`Error saving file: ${err.message}`);
-                    return res.status(500).send("Error saving file.");
-                }
+        //! 這邊註解要解
+        //TODO 解決生成聲音的問題
+        // try{
+        //     fs.rename(file.path, fullPath, (err) => {
+        //         if (err) {
+        //             console.error(`Error saving file: ${err.message}`);
+        //             return res.status(500).send("Error saving file.");
+        //         }
 
-                console.log(`File ${audioName} saved successfully in ${filePath}`);
-            });
+        //         console.log(`File ${audioName} saved successfully in ${filePath}`);
+        //     });
     
-            await trainVoice(audioName);
-            res.send({code:200, message: "train voice model success"})
-        } catch(err:any){
-            res.send({code: 500, message: err.message});
-        }
+        //     await trainVoice(audioName);
+        //     res.send({code:200, message: "train voice model success"})
+        // } catch(err:any){
+        //     res.send({code: 500, message: err.message});
+        // }
     }
 
     public async testsetVoiceModel(req:Request, res:Response){
