@@ -1,4 +1,4 @@
-import { fetchImage, getVoices, setVoiceModel } from "../tools/fetch"; 
+import { fetchImage } from "../tools/fetch"; 
 import { caseSdModelUse } from "./sdModel_tool";
 import { GenImg_prompt_En_array } from "./LLM_fetch_images";
 import { DataBase } from "../DataBase";
@@ -7,6 +7,7 @@ import { RoleFormInterface } from "../../interfaces/RoleFormInterface";
 import { storyInterface } from "../../interfaces/storyInterface";
 import fs from 'fs/promises';
 import path from 'path'; 
+import { genFishVoice } from "./trainVoiceModel";
 
 export const delayedExecution = async(): Promise<void> => {
     console.log('Waiting for 3 seconds...');
@@ -31,15 +32,22 @@ export const CurrentTime = () =>{
     return formattedTime;
 }
 
-export const GenVoice = async (storyId:string, storyTale:string) => {
+// 生成語音（fish speech）
+export const GenVoice = async (storyId: string, joinedStoryTale: string[]): Promise<boolean> => {
     try {
-        const { audioFileName, audioBuffer } = await getVoices(storyId, storyTale);
-        const filePath = path.join(process.env.dev_saveAudio!, audioFileName);
-        await fs.writeFile(filePath, Buffer.from(audioBuffer));
+        const results = await Promise.all(
+            joinedStoryTale.map(storySegment => genFishVoice(storyId, storySegment))
+        );
         
-        console.log(`Voice generated successfully, and saved success`);
+        if (results.some(result => !result)) {
+            throw new Error('語音生成失敗');
+        }
+        
+        console.log(`語音生成成功並已保存`);
+        return true;
     } catch (error) {
-        console.error("Error in GenVoice: ", error);
+        console.error("語音生成過程中發生錯誤: ", error);
+        return false;
     }
 }
 
@@ -93,7 +101,7 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         // await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
 
         // console.log(`start getVoices`);
-        const joinedStory = generated_story_array.reduce((acc: string[], curr: string, i: number) => {
+        const joinedStoryTale: string[] = generated_story_array.reduce((acc: string[], curr: string, i: number) => {
             if (i % 2 === 0) {
                 if (i + 1 < generated_story_array.length) {
                     acc.push(generated_story_array[i] + generated_story_array[i + 1]);
@@ -103,8 +111,8 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
             }
             return acc;
         }, []);
-        await GenVoice(Saved_storyID, joinedStory, voiceModelName);
-        // console.log(`story generate finish !!`);
+        await GenVoice(Saved_storyID, joinedStoryTale);
+        console.log(`story generate finish !!`);
         return Saved_storyID;
     } catch (error: any) {
         console.error(`Error generating story: ${error.message}`);

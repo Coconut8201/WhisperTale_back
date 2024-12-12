@@ -8,9 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenImage = exports.GenImagePrompt = exports.generateStory = exports.isObjectValid = exports.GenVoice = exports.CurrentTime = exports.delayedExecution = void 0;
 const fetch_1 = require("../tools/fetch");
@@ -18,8 +15,7 @@ const sdModel_tool_1 = require("./sdModel_tool");
 const LLM_fetch_images_1 = require("./LLM_fetch_images");
 const DataBase_1 = require("../DataBase");
 const LLMapi_1 = require("./LLMapi");
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
+const trainVoiceModel_1 = require("./trainVoiceModel");
 const delayedExecution = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Waiting for 3 seconds...');
     yield new Promise(resolve => setTimeout(resolve, 1000)); // 等待 3 秒鐘
@@ -42,15 +38,19 @@ const CurrentTime = () => {
     return formattedTime;
 };
 exports.CurrentTime = CurrentTime;
-const GenVoice = (storyId, storyTale) => __awaiter(void 0, void 0, void 0, function* () {
+// 生成語音（fish speech）
+const GenVoice = (storyId, joinedStoryTale) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { audioFileName, audioBuffer } = yield (0, fetch_1.getVoices)(storyId, storyTale);
-        const filePath = path_1.default.join(process.env.dev_saveAudio, audioFileName);
-        yield promises_1.default.writeFile(filePath, Buffer.from(audioBuffer));
-        console.log(`Voice generated successfully, and saved success`);
+        const results = yield Promise.all(joinedStoryTale.map(storySegment => (0, trainVoiceModel_1.genFishVoice)(storyId, storySegment)));
+        if (results.some(result => !result)) {
+            throw new Error('語音生成失敗');
+        }
+        console.log(`語音生成成功並已保存`);
+        return true;
     }
     catch (error) {
-        console.error("Error in GenVoice: ", error);
+        console.error("語音生成過程中發生錯誤: ", error);
+        return false;
     }
 });
 exports.GenVoice = GenVoice;
@@ -95,7 +95,7 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
         // console.log(`start GenImage`);
         // await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
         // console.log(`start getVoices`);
-        const joinedStory = generated_story_array.reduce((acc, curr, i) => {
+        const joinedStoryTale = generated_story_array.reduce((acc, curr, i) => {
             if (i % 2 === 0) {
                 if (i + 1 < generated_story_array.length) {
                     acc.push(generated_story_array[i] + generated_story_array[i + 1]);
@@ -106,8 +106,8 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             }
             return acc;
         }, []);
-        yield (0, exports.GenVoice)(Saved_storyID, joinedStory, voiceModelName);
-        // console.log(`story generate finish !!`);
+        yield (0, exports.GenVoice)(Saved_storyID, joinedStoryTale);
+        console.log(`story generate finish !!`);
         return Saved_storyID;
     }
     catch (error) {

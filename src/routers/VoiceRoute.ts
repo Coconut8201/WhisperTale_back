@@ -24,7 +24,6 @@ export class VoiceRoute extends Route {
         this.router.post(`${this.url}/uploadvoices`,authenticateToken,upload.single("file"),this.Controller.UploadVoice);
         this.router.get(`${this.url}/getVoiceList`,this.Controller.getVoiceList);
 
-        this.router.post(`${this.url}/setVoiceModel`,this.Controller.testsetVoiceModel);
         this.router.post(`${this.url}/testwhisper`,this.Controller.testwhisper);
     }
 }

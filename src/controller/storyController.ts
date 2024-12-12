@@ -3,7 +3,7 @@ import { Request, Response} from "express";
 import { DataBase } from "../utils/DataBase";
 import { GenImg_prompt_En, sdModelOption, getSDModelList } from "../utils/tools/LLM_fetch_images";
 import { storyInterface } from "../interfaces/storyInterface";
-import { fetchImage, getVoices } from "../utils/tools/fetch";
+import { fetchImage } from "../utils/tools/fetch";
 import { RoleFormInterface } from "../interfaces/RoleFormInterface";
 import { isObjectValid, generateStory } from "../utils/tools/tool";
 import PQueue from 'p-queue';
@@ -124,37 +124,6 @@ export class StoryController extends Controller {
       Response.status(500).send({ error: "Failed to generate image" });
     }
   };
-
-  public async SaveVoice(req: Request, res: Response) {
-    try {
-      const { storyId, storyTale, voiceModelName } = req.body;
-      const { audioFileName, audioBuffer } = await getVoices(storyId, storyTale, voiceModelName);
-
-      const filePath = path.join(process.env.dev_saveAudio!, audioFileName);
-      await fs.promises.writeFile(filePath, Buffer.from(audioBuffer));
-
-      res.json({
-        success: true,
-        message: "Voice generated successfully",
-        audioFilePath: filePath,
-        audioFileName: audioFileName
-      });
-
-    } catch (error) {
-      console.error("Error in voice generation test:", error);
-
-      let errorMessage = "An unknown error occurred";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      res.status(500).json({
-        success: false,
-        message: "Voice generation test failed",
-        error: errorMessage
-      });
-    }
-  }
 
   public async TakeVoice(Request: Request, Response: Response) {
     try {

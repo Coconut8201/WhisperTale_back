@@ -23,7 +23,6 @@ class StoryRoute extends Route_1.Route {
         this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
         this.router.get(`${this.url}/images/sdmodellist`, this.Controller.GetSDModelList);
         this.router.post(`${this.url}/image/re_gen_image`, this.Controller.ReGenImage);
-        this.router.post(`${this.url}/voice/savevoice`, this.Controller.SaveVoice);
         this.router.post(`${this.url}/voice/take_voice`, this.Controller.TakeVoice);
         // http://localhost:7943/story/startstory
         // http://localhost:7943/story/getstorylist_fdb

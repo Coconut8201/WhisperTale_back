@@ -138,34 +138,6 @@ class StoryController extends Controller_1.Controller {
             Response.send(yield (0, LLM_fetch_images_1.getSDModelList)());
         });
     }
-    SaveVoice(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { storyId, storyTale, voiceModelName } = req.body;
-                const { audioFileName, audioBuffer } = yield (0, fetch_1.getVoices)(storyId, storyTale, voiceModelName);
-                const filePath = path_1.default.join(process.env.dev_saveAudio, audioFileName);
-                yield fs_1.default.promises.writeFile(filePath, Buffer.from(audioBuffer));
-                res.json({
-                    success: true,
-                    message: "Voice generated successfully",
-                    audioFilePath: filePath,
-                    audioFileName: audioFileName
-                });
-            }
-            catch (error) {
-                console.error("Error in voice generation test:", error);
-                let errorMessage = "An unknown error occurred";
-                if (error instanceof Error) {
-                    errorMessage = error.message;
-                }
-                res.status(500).json({
-                    success: false,
-                    message: "Voice generation test failed",
-                    error: errorMessage
-                });
-            }
-        });
-    }
     TakeVoice(Request, Response) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

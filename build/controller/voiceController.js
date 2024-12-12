@@ -22,6 +22,7 @@ dotenv_1.default.config();
 class VoiceController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
+        // 上傳聲音並生成語音
         this.UploadVoice = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             if (!req.file) {
@@ -34,42 +35,37 @@ class VoiceController extends Controller_1.Controller {
             const file = req.file;
             const audioName = req.body.audioName;
             const filePath = process.env.dev_saveRecording + `/${userId}/${audioName}`; // 存放使用者聲音的目錄
-            yield fs_1.default.promises.mkdir(filePath, { recursive: true });
-            const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
-            //! 這邊註解要解
-            //TODO 解決生成聲音的問題
-            // try{
-            //     fs.rename(file.path, fullPath, (err) => {
-            //         if (err) {
-            //             console.error(`Error saving file: ${err.message}`);
-            //             return res.status(500).send("Error saving file.");
-            //         }
-            //         console.log(`File ${audioName} saved successfully in ${filePath}`);
-            //     });
-            //     await trainVoice(audioName);
-            //     res.send({code:200, message: "train voice model success"})
-            // } catch(err:any){
-            //     res.send({code: 500, message: err.message});
-            // }
+            try {
+                yield fs_1.default.promises.mkdir(filePath, { recursive: true });
+                const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
+                // 使用 promises 版本的 rename
+                yield fs_1.default.promises.rename(file.path, fullPath);
+                console.log(`File ${audioName} saved successfully in ${filePath}`);
+                yield trainVoice(audioName);
+                res.send({ code: 200, message: "train voice model success" });
+            }
+            catch (err) {
+                console.error(`Error in UploadVoice:`, err);
+                res.status(500).send({ code: 500, message: err.message });
+            }
         });
     }
     test(Request, Response) {
         Response.send(`This is VoiceController`);
     }
-    testsetVoiceModel(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const modelName = req.body.modelName;
-            console.log("modelName: ", modelName);
-            const result = yield (0, fetch_1.setVoiceModel)(modelName);
-            res.send(`testsetVoiceModel: ${result.message}`);
-        });
-    }
     testwhisper(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const audioName = req.body.audioName;
-            const referPathDir = req.body.referPathDir;
-            const result = yield (0, fetch_1.whisperCall)(audioName, referPathDir);
-            res.send(`testwhisper: ${result.message}`);
+            try {
+                const referPathDir = req.body.referPathDir;
+                const audioName = req.body.audioName;
+                // 注意這裡參數順序的調整，符合新的 whisperCall 函數
+                const result = yield (0, fetch_1.whisperCall)(referPathDir, audioName);
+                res.send({ code: 200, message: result });
+            }
+            catch (error) {
+                console.error('Whisper 處理失敗:', error);
+                res.status(500).send({ code: 500, message: error.message });
+            }
         });
     }
     getVoiceList(req, res) {
@@ -80,11 +76,15 @@ class VoiceController extends Controller_1.Controller {
                 const directories = entries
                     .filter(entry => entry.isDirectory())
                     .map(entry => entry.name);
-                res.json({ listData: directories });
+                res.json({ code: 200, listData: directories });
             }
             catch (error) {
                 console.error('讀取目錄時發生錯誤:', error);
-                res.status(500).json({ listData: [], error: '無法讀取語音模型列表' });
+                res.status(500).json({
+                    code: 500,
+                    listData: [],
+                    error: '無法讀取語音模型列表'
+                });
             }
         });
     }
