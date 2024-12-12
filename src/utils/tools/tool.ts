@@ -2,11 +2,9 @@ import { fetchImage } from "../tools/fetch";
 import { caseSdModelUse } from "./sdModel_tool";
 import { GenImg_prompt_En_array } from "./LLM_fetch_images";
 import { DataBase } from "../DataBase";
-import { LLMGen_release, LLMGenStory_1st_2nd } from "./LLMapi";
+import { LLMGenStory_1st_2nd } from "./LLMapi";
 import { RoleFormInterface } from "../../interfaces/RoleFormInterface";
 import { storyInterface } from "../../interfaces/storyInterface";
-import fs from 'fs/promises';
-import path from 'path'; 
 import { genFishVoice } from "./trainVoiceModel";
 
 export const delayedExecution = async(): Promise<void> => {
@@ -33,23 +31,21 @@ export const CurrentTime = () =>{
 }
 
 // 生成語音（fish speech）
-export const GenVoice = async (storyId: string, joinedStoryTale: string[]): Promise<boolean> => {
+export const genStoryVoice = async (userId: string, storyId: string, joinedStoryTale: string[]): Promise<boolean> => {
     try {
         const results = await Promise.all(
-            joinedStoryTale.map(storySegment => genFishVoice(storyId, storySegment))
+            joinedStoryTale.map((storySegment, index) => {
+                const voiceName = 'page'+(index + 1).toString();
+                return genFishVoice(userId, storyId, storySegment, voiceName);
+            })
         );
         
-        if (results.some(result => !result)) {
-            throw new Error('語音生成失敗');
-        }
-        
-        console.log(`語音生成成功並已保存`);
-        return true;
+        return results.every(result => result === true);
     } catch (error) {
-        console.error("語音生成過程中發生錯誤: ", error);
+        console.error('語音生成過程中發生錯誤: ', error);
         return false;
     }
-}
+};
 
 //  判斷物件內的屬性是否都存在
 export function isObjectValid(obj: any | null | undefined): boolean {
@@ -111,7 +107,7 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
             }
             return acc;
         }, []);
-        await GenVoice(Saved_storyID, joinedStoryTale);
+        await genStoryVoice(userId, Saved_storyID, joinedStoryTale);
         console.log(`story generate finish !!`);
         return Saved_storyID;
     } catch (error: any) {

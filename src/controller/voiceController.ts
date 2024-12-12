@@ -32,8 +32,6 @@ export class VoiceController extends Controller{
             // 使用 promises 版本的 rename
             await fs.promises.rename(file.path, fullPath);
             console.log(`File ${audioName} saved successfully in ${filePath}`);
-    
-            await trainVoice(audioName);
             res.send({code: 200, message: "train voice model success"});
         } catch(err: any) {
             console.error(`Error in UploadVoice:`, err);

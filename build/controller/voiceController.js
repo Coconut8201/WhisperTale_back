@@ -41,7 +41,6 @@ class VoiceController extends Controller_1.Controller {
                 // 使用 promises 版本的 rename
                 yield fs_1.default.promises.rename(file.path, fullPath);
                 console.log(`File ${audioName} saved successfully in ${filePath}`);
-                yield trainVoice(audioName);
                 res.send({ code: 200, message: "train voice model success" });
             }
             catch (err) {

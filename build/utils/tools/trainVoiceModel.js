@@ -12,16 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.genFishVoice = exports.genVoice = void 0;
+exports.genFishVoice = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
-const genVoice = (storyId, voiceName) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, exports.genFishVoice)(storyId, voiceName);
-    console.log("訓練完成");
-});
-exports.genVoice = genVoice;
 // 確認目標dir 存在
 function ensureDir(dir) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -67,19 +62,19 @@ const executeCommand = (command, args, options) => __awaiter(void 0, void 0, voi
     });
 });
 // 用fish speech 生成聲音
-const genFishVoice = (storyId, voiceName) => __awaiter(void 0, void 0, void 0, function* () {
+const genFishVoice = (userId, storyId, storyText, voiceName) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const saveVoicePath = `${process.env.dev_saveAudio}/${storyId}`;
+        const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
         yield ensureDir(saveVoicePath);
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi,
-            '--text', '中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都不敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都不敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都��敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。',
+            '--text', `\"${storyText}。\"`,
             '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
             '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
             '--format', 'wav',
-            '--output', path_1.default.join(saveVoicePath, `${voiceName}.wav`),
+            '--output', path_1.default.join(saveVoicePath, `${voiceName}`),
             '--play', 'False'
         ];
         const result = yield executeCommand(command, args, {

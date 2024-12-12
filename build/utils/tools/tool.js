@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenImage = exports.GenImagePrompt = exports.generateStory = exports.isObjectValid = exports.GenVoice = exports.CurrentTime = exports.delayedExecution = void 0;
+exports.GenImage = exports.GenImagePrompt = exports.generateStory = exports.isObjectValid = exports.genStoryVoice = exports.CurrentTime = exports.delayedExecution = void 0;
 const fetch_1 = require("../tools/fetch");
 const sdModel_tool_1 = require("./sdModel_tool");
 const LLM_fetch_images_1 = require("./LLM_fetch_images");
@@ -39,21 +39,20 @@ const CurrentTime = () => {
 };
 exports.CurrentTime = CurrentTime;
 // 生成語音（fish speech）
-const GenVoice = (storyId, joinedStoryTale) => __awaiter(void 0, void 0, void 0, function* () {
+const genStoryVoice = (userId, storyId, joinedStoryTale) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const results = yield Promise.all(joinedStoryTale.map(storySegment => (0, trainVoiceModel_1.genFishVoice)(storyId, storySegment)));
-        if (results.some(result => !result)) {
-            throw new Error('語音生成失敗');
-        }
-        console.log(`語音生成成功並已保存`);
-        return true;
+        const results = yield Promise.all(joinedStoryTale.map((storySegment, index) => {
+            const voiceName = 'page' + (index + 1).toString();
+            return (0, trainVoiceModel_1.genFishVoice)(userId, storyId, storySegment, voiceName);
+        }));
+        return results.every(result => result === true);
     }
     catch (error) {
-        console.error("語音生成過程中發生錯誤: ", error);
+        console.error('語音生成過程中發生錯誤: ', error);
         return false;
     }
 });
-exports.GenVoice = GenVoice;
+exports.genStoryVoice = genStoryVoice;
 //  判斷物件內的屬性是否都存在
 function isObjectValid(obj) {
     if (!obj)
@@ -106,7 +105,7 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             }
             return acc;
         }, []);
-        yield (0, exports.GenVoice)(Saved_storyID, joinedStoryTale);
+        yield (0, exports.genStoryVoice)(userId, Saved_storyID, joinedStoryTale);
         console.log(`story generate finish !!`);
         return Saved_storyID;
     }
