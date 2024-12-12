@@ -23,7 +23,7 @@ export class VoiceController extends Controller{
         
         const file = req.file;
         const audioName = req.body.audioName;
-        const filePath = process.env.dev_saveRecording! + `/${userId}/${audioName}`; // 存放使用者聲音的目錄
+        const filePath = process.env.dev_saveRecording! + `/user_${userId}/${audioName}`; // 存放使用者聲音的目錄
         
         try {
             await fs.promises.mkdir(filePath, { recursive: true });
@@ -52,9 +52,11 @@ export class VoiceController extends Controller{
         }
     }
 
-    public async getVoiceList(req: Request, res: Response) {
+    public getVoiceList = async(req: Request, res: Response) => {
+        const userId = (req as any).user?.id;
+
         try {
-            const directoryPath = process.env.VoiceListPath!;
+            const directoryPath = path.join(process.env.userVoiceListPath!, `user_${userId}`);
             const entries = await fs.promises.readdir(directoryPath, { withFileTypes: true });
             const directories = entries
                 .filter(entry => entry.isDirectory())

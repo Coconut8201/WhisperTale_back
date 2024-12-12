@@ -34,7 +34,7 @@ class VoiceController extends Controller_1.Controller {
             }
             const file = req.file;
             const audioName = req.body.audioName;
-            const filePath = process.env.dev_saveRecording + `/${userId}/${audioName}`; // 存放使用者聲音的目錄
+            const filePath = process.env.dev_saveRecording + `/user_${userId}/${audioName}`; // 存放使用者聲音的目錄
             try {
                 yield fs_1.default.promises.mkdir(filePath, { recursive: true });
                 const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
@@ -46,6 +46,26 @@ class VoiceController extends Controller_1.Controller {
             catch (err) {
                 console.error(`Error in UploadVoice:`, err);
                 res.status(500).send({ code: 500, message: err.message });
+            }
+        });
+        this.getVoiceList = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _b;
+            const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.id;
+            try {
+                const directoryPath = path_1.default.join(process.env.userVoiceListPath, `user_${userId}`);
+                const entries = yield fs_1.default.promises.readdir(directoryPath, { withFileTypes: true });
+                const directories = entries
+                    .filter(entry => entry.isDirectory())
+                    .map(entry => entry.name);
+                res.json({ code: 200, listData: directories });
+            }
+            catch (error) {
+                console.error('讀取目錄時發生錯誤:', error);
+                res.status(500).json({
+                    code: 500,
+                    listData: [],
+                    error: '無法讀取語音模型列表'
+                });
             }
         });
     }
@@ -64,26 +84,6 @@ class VoiceController extends Controller_1.Controller {
             catch (error) {
                 console.error('Whisper 處理失敗:', error);
                 res.status(500).send({ code: 500, message: error.message });
-            }
-        });
-    }
-    getVoiceList(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const directoryPath = process.env.VoiceListPath;
-                const entries = yield fs_1.default.promises.readdir(directoryPath, { withFileTypes: true });
-                const directories = entries
-                    .filter(entry => entry.isDirectory())
-                    .map(entry => entry.name);
-                res.json({ code: 200, listData: directories });
-            }
-            catch (error) {
-                console.error('讀取目錄時發生錯誤:', error);
-                res.status(500).json({
-                    code: 500,
-                    listData: [],
-                    error: '無法讀取語音模型列表'
-                });
             }
         });
     }
