@@ -62,22 +62,30 @@ const executeCommand = (command, args, options) => __awaiter(void 0, void 0, voi
     });
 });
 // 用fish speech 生成聲音
-const genFishVoice = (userId, storyId, storyText, voiceName) => __awaiter(void 0, void 0, void 0, function* () {
+const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
-        const voiceText = yield promises_1.default.readFile(`${saveVoicePath}/info.txt`, 'utf-8');
+        const userVoicePath = `${process.env.dev_saveRecording}/user_${userId}/${userVoiceName}`;
+        const voiceText = yield promises_1.default.readFile(`${userVoicePath}/info.txt`, 'utf-8');
         yield ensureDir(saveVoicePath);
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi,
             '--text', `\"${storyText}。\"`,
-            '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
-            '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
-            // '--reference_text', voiceText,
+            '--reference_audio', `${userVoicePath}/${userVoiceName}.wav`,
+            '--reference_text', voiceText,
             '--format', 'wav',
             '--output', path_1.default.join(saveVoicePath, `${voiceName}`),
             '--play', 'False'
+            // '-m', 'tools.api_client',
+            // '--url', process.env.fishSpeechApi as string,
+            // '--text', `\"${storyText}。\"`,
+            // '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
+            // '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
+            // '--format', 'wav',
+            // '--output', path.join(saveVoicePath, `${voiceName}`),
+            // '--play', 'False'
         ];
         const result = yield executeCommand(command, args, {
             shell: true,

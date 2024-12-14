@@ -31,12 +31,12 @@ export const CurrentTime = () =>{
 }
 
 // 生成語音（fish speech）
-export const genStoryVoice = async (userId: string, storyId: string, joinedStoryTale: string[]): Promise<boolean> => {
+export const genStoryVoice = async (userId: string, storyId: string, joinedStoryTale: string[], userVoiceName: string): Promise<boolean> => {
     try {
         const results = await Promise.all(
             joinedStoryTale.map((storySegment, index) => {
                 const voiceName = 'page'+(index + 1).toString();
-                return genFishVoice(userId, storyId, storySegment, voiceName);
+                return genFishVoice(userId, storyId, storySegment, voiceName, userVoiceName);
             })
         );
         
@@ -107,7 +107,7 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
             }
             return acc;
         }, []);
-        await genStoryVoice(userId, Saved_storyID, joinedStoryTale);
+        await genStoryVoice(userId, Saved_storyID, joinedStoryTale, voiceModelName);
         console.log(`story generate finish !!`);
         return Saved_storyID;
     } catch (error: any) {

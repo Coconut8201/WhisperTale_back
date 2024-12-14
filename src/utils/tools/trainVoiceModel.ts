@@ -49,22 +49,30 @@ const executeCommand = async (command: string, args: string[], options: any): Pr
 };
 
 // 用fish speech 生成聲音
-export const genFishVoice = async ( userId: string, storyId: string, storyText: string, voiceName: string ): Promise<boolean> => {
+export const genFishVoice = async ( userId: string, storyId: string, storyText: string, voiceName: string , userVoiceName: string): Promise<boolean> => {
     try {
         const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
-        const voiceText = await fs.readFile(`${saveVoicePath}/info.txt`, 'utf-8');
+        const userVoicePath = `${process.env.dev_saveRecording}/user_${userId}/${userVoiceName}`;
+        const voiceText = await fs.readFile(`${userVoicePath}/info.txt`, 'utf-8');
         await ensureDir(saveVoicePath);
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi as string,
             '--text', `\"${storyText}。\"`,
-            '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
-            '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
-            // '--reference_text', voiceText,
+            '--reference_audio', `${userVoicePath}/${userVoiceName}.wav`,
+            '--reference_text', voiceText,
             '--format', 'wav',
             '--output', path.join(saveVoicePath, `${voiceName}`),
             '--play', 'False'
+            // '-m', 'tools.api_client',
+            // '--url', process.env.fishSpeechApi as string,
+            // '--text', `\"${storyText}。\"`,
+            // '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
+            // '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
+            // '--format', 'wav',
+            // '--output', path.join(saveVoicePath, `${voiceName}`),
+            // '--play', 'False'
         ];
 
         const result = await executeCommand(command, args, {

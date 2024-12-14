@@ -39,11 +39,11 @@ const CurrentTime = () => {
 };
 exports.CurrentTime = CurrentTime;
 // 生成語音（fish speech）
-const genStoryVoice = (userId, storyId, joinedStoryTale) => __awaiter(void 0, void 0, void 0, function* () {
+const genStoryVoice = (userId, storyId, joinedStoryTale, userVoiceName) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const results = yield Promise.all(joinedStoryTale.map((storySegment, index) => {
             const voiceName = 'page' + (index + 1).toString();
-            return (0, trainVoiceModel_1.genFishVoice)(userId, storyId, storySegment, voiceName);
+            return (0, trainVoiceModel_1.genFishVoice)(userId, storyId, storySegment, voiceName, userVoiceName);
         }));
         return results.every(result => result === true);
     }
@@ -105,7 +105,7 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             }
             return acc;
         }, []);
-        yield (0, exports.genStoryVoice)(userId, Saved_storyID, joinedStoryTale);
+        yield (0, exports.genStoryVoice)(userId, Saved_storyID, joinedStoryTale, voiceModelName);
         console.log(`story generate finish !!`);
         return Saved_storyID;
     }
