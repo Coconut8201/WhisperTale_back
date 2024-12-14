@@ -23,7 +23,7 @@ export class VoiceRoute extends Route {
         this.router.get(`${this.url}`,this.Controller.test);
         this.router.post(`${this.url}/uploadvoices`,authenticateToken,upload.single("file"),this.Controller.UploadVoice);
         this.router.get(`${this.url}/getVoiceList`,authenticateToken,this.Controller.getVoiceList);
-
+        this.router.post(`${this.url}/take_voice`, authenticateToken,this.Controller.takeVoice);
         this.router.post(`${this.url}/testwhisper`,this.Controller.testwhisper);
     }
 }

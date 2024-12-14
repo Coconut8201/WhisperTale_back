@@ -77,4 +77,15 @@ export class VoiceController extends Controller{
             });
         }
     }
+
+    public takeVoice(req: Request, res: Response) {
+        const userId = (req as any).user?.id;
+        const { storyId, pageNum: pageIndex } = req.body;
+        const voicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+
+        if (!fs.existsSync(voicePath)) {
+            return res.status(404).json({code: 404, message: '無法找到語音'});
+        }
+        res.sendFile(voicePath);
+    }
 }

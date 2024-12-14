@@ -23,6 +23,7 @@ class VoiceRoute extends Route_1.Route {
         this.router.get(`${this.url}`, this.Controller.test);
         this.router.post(`${this.url}/uploadvoices`, autherMiddleware_1.authenticateToken, multer_1.upload.single("file"), this.Controller.UploadVoice);
         this.router.get(`${this.url}/getVoiceList`, autherMiddleware_1.authenticateToken, this.Controller.getVoiceList);
+        this.router.post(`${this.url}/take_voice`, autherMiddleware_1.authenticateToken, this.Controller.takeVoice);
         this.router.post(`${this.url}/testwhisper`, this.Controller.testwhisper);
     }
 }
