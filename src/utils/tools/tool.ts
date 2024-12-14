@@ -64,6 +64,7 @@ const removeEnglish = (str: string): string => {
 };
 
 // 生成故事內容
+// TODO 加入故事封面及標題
 export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModelName:string, userId: string): Promise<string> => {
     try {
         let Saved_storyID = await LLMGenStory_1st_2nd(storyRoleForm, Response, userId);

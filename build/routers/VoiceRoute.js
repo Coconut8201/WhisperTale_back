@@ -19,6 +19,7 @@ class VoiceRoute extends Route_1.Route {
     // https://163.13.202.128/api/voiceset/getVoiceList
     // https://163.13.202.128/api/voiceset/setVoiceModel
     // https://163.13.202.128/api/voiceset/testwhisper
+    // https://163.13.202.128/api/voiceset/take_voice
     setRoutes() {
         this.router.get(`${this.url}`, this.Controller.test);
         this.router.post(`${this.url}/uploadvoices`, autherMiddleware_1.authenticateToken, multer_1.upload.single("file"), this.Controller.UploadVoice);

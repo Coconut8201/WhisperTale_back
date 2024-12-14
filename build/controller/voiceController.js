@@ -95,8 +95,9 @@ class VoiceController extends Controller_1.Controller {
     takeVoice(req, res) {
         var _a;
         const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-        const { storyId, pageNum: pageIndex } = req.body;
+        const { storyId, pageIndex } = req.body;
         const voicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+        console.log(`voicePath: ${voicePath}`);
         if (!fs_1.default.existsSync(voicePath)) {
             return res.status(404).json({ code: 404, message: '無法找到語音' });
         }
