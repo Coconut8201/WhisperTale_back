@@ -37,35 +37,23 @@ import path from 'path';
 //     }
 // };
 
-// whisper 轉文字
-export const whisperCall = async (referPathDir: string, firstFile: string) => {
-    async function query(filename: string) {
-        const data = await fs.promises.readFile(filename);
-        const response = await fetch(
-            "https://api-inference.huggingface.co/models/openai/whisper-large-v3",
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINFACE_API}`,
-                    "Content-Type": "application/octet-stream",
-                },
-                method: "POST",
-                body: data,
-            }
-        );
-        const result = await response.json();
-        return result;
-    }
-
-    try {
-        console.log(`referPathDir: ${referPathDir}, firstFile: ${firstFile} join: ${path.join(referPathDir, firstFile)}`);
-        const response = await query(path.join(referPathDir, firstFile));
-        console.log("whisperCall response:", JSON.stringify(response));
-        return response.text;
-    } catch (error) {
-        console.error("Error in whisperCall:", error);
-        throw error;
-    }
-};
+// whisper 語音轉文字
+export const whisperCall = async (filePath: string) => {
+    const data = fs.readFileSync(filePath);
+    const response = await fetch(
+        "https://api-inference.huggingface.co/models/openai/whisper-large-v3",
+        {
+            headers: {
+                Authorization: `Bearer ${process.env.HUGGINFACE_API}`,
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: data,
+        }
+    );
+    const result = await response.json();
+    return result.text;
+}
 
 export const fetchImage = async (payload:Object) => {
     const requestOptions = {

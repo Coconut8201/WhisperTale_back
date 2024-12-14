@@ -16,7 +16,6 @@ exports.fetchImage = exports.whisperCall = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
 // const findLatestFile = (directory: string, prefix: string): string | null => {
 //     try {
 //         const allFiles = fs.readdirSync(directory);
@@ -44,33 +43,19 @@ const path_1 = __importDefault(require("path"));
 //         return null;
 //     }
 // };
-// whisper 轉文字
-const whisperCall = (referPathDir, firstFile) => __awaiter(void 0, void 0, void 0, function* () {
-    function query(filename) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield fs_1.default.promises.readFile(filename);
-            const response = yield fetch("https://api-inference.huggingface.co/models/openai/whisper-large-v3", {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINFACE_API}`,
-                    "Content-Type": "application/octet-stream",
-                },
-                method: "POST",
-                body: data,
-            });
-            const result = yield response.json();
-            return result;
-        });
-    }
-    try {
-        console.log(`referPathDir: ${referPathDir}, firstFile: ${firstFile} join: ${path_1.default.join(referPathDir, firstFile)}`);
-        const response = yield query(path_1.default.join(referPathDir, firstFile));
-        console.log("whisperCall response:", JSON.stringify(response));
-        return response.text;
-    }
-    catch (error) {
-        console.error("Error in whisperCall:", error);
-        throw error;
-    }
+// whisper 語音轉文字
+const whisperCall = (filePath) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = fs_1.default.readFileSync(filePath);
+    const response = yield fetch("https://api-inference.huggingface.co/models/openai/whisper-large-v3", {
+        headers: {
+            Authorization: `Bearer ${process.env.HUGGINFACE_API}`,
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: data,
+    });
+    const result = yield response.json();
+    return result.text;
 });
 exports.whisperCall = whisperCall;
 const fetchImage = (payload) => __awaiter(void 0, void 0, void 0, function* () {

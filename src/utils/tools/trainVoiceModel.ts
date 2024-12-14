@@ -52,9 +52,8 @@ const executeCommand = async (command: string, args: string[], options: any): Pr
 export const genFishVoice = async ( userId: string, storyId: string, storyText: string, voiceName: string ): Promise<boolean> => {
     try {
         const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
-        
-        await ensureDir(saveVoicePath)
-        
+        const voiceText = await fs.readFile(`${saveVoicePath}/info.txt`, 'utf-8');
+        await ensureDir(saveVoicePath);
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
@@ -62,6 +61,7 @@ export const genFishVoice = async ( userId: string, storyId: string, storyText: 
             '--text', `\"${storyText}。\"`,
             '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
             '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
+            // '--reference_text', voiceText,
             '--format', 'wav',
             '--output', path.join(saveVoicePath, `${voiceName}`),
             '--play', 'False'

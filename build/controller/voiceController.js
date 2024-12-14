@@ -17,6 +17,8 @@ const Controller_1 = require("../interfaces/Controller");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const fetch_1 = require("../utils/tools/fetch");
+const opencc_js_1 = __importDefault(require("opencc-js"));
+const converter = opencc_js_1.default.Converter({ from: 'tw', to: 'cn' });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class VoiceController extends Controller_1.Controller {
@@ -38,9 +40,12 @@ class VoiceController extends Controller_1.Controller {
             try {
                 yield fs_1.default.promises.mkdir(filePath, { recursive: true });
                 const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
-                // 使用 promises 版本的 rename
                 yield fs_1.default.promises.rename(file.path, fullPath);
-                console.log(`File ${audioName} saved successfully in ${filePath}`);
+                const infoTxtDontknowZh = yield (0, fetch_1.whisperCall)(fullPath);
+                const infoTxtZh = converter(infoTxtDontknowZh);
+                const infoFullPath = path_1.default.join(filePath, 'info.txt');
+                yield fs_1.default.promises.writeFile(infoFullPath, infoTxtZh);
+                console.log(`File ${audioName} saved successfully in ${filePath} and info.txt is done.`);
                 res.send({ code: 200, message: "train voice model success" });
             }
             catch (err) {
@@ -77,8 +82,8 @@ class VoiceController extends Controller_1.Controller {
             try {
                 const referPathDir = req.body.referPathDir;
                 const audioName = req.body.audioName;
-                // 注意這裡參數順序的調整，符合新的 whisperCall 函數
-                const result = yield (0, fetch_1.whisperCall)(referPathDir, audioName);
+                const fathPath = path_1.default.join(referPathDir, audioName);
+                const result = yield (0, fetch_1.whisperCall)(fathPath);
                 res.send({ code: 200, message: result });
             }
             catch (error) {

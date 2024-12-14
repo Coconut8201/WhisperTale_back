@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import path from 'path';
 import fs from 'fs';
 import { whisperCall } from "../utils/tools/fetch";
+import OpenCC from 'opencc-js';
+const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -29,9 +31,13 @@ export class VoiceController extends Controller{
             await fs.promises.mkdir(filePath, { recursive: true });
             const fullPath = path.join(filePath, `${audioName}.wav`);
             
-            // 使用 promises 版本的 rename
-            await fs.promises.rename(file.path, fullPath);
-            console.log(`File ${audioName} saved successfully in ${filePath}`);
+            await fs.promises.rename(file.path, fullPath);            
+            const infoTxtDontknowZh = await whisperCall(fullPath);
+            const infoTxtZh = converter(infoTxtDontknowZh);
+            const infoFullPath = path.join(filePath, 'info.txt');
+            await fs.promises.writeFile(infoFullPath, infoTxtZh );
+
+            console.log(`File ${audioName} saved successfully in ${filePath} and info.txt is done.`);
             res.send({code: 200, message: "train voice model success"});
         } catch(err: any) {
             console.error(`Error in UploadVoice:`, err);
@@ -43,8 +49,8 @@ export class VoiceController extends Controller{
         try {
             const referPathDir = req.body.referPathDir;
             const audioName = req.body.audioName;
-            // 注意這裡參數順序的調整，符合新的 whisperCall 函數
-            const result = await whisperCall(referPathDir, audioName);
+            const fathPath = path.join(referPathDir, audioName);
+            const result = await whisperCall(fathPath);
             res.send({code: 200, message: result});
         } catch (error: any) {
             console.error('Whisper 處理失敗:', error);
