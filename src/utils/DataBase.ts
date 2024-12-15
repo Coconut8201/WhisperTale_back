@@ -74,7 +74,6 @@ export class DataBase{
                     bookFirstImageBase64: bookData.image_base64?.[0] || ''
                 };
             }));
-            console.log(`returnBookData: ${JSON.stringify(returnBookData)}`)
             return { success: true, message: "getstoryList success", value: returnBookData };
         } catch (e:any) {
             return { success: false, message: `getstoryList fail ${e.message}` };

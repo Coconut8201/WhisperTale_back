@@ -86,7 +86,6 @@ class DataBase {
                         bookFirstImageBase64: ((_a = bookData.image_base64) === null || _a === void 0 ? void 0 : _a[0]) || ''
                     };
                 })));
-                console.log(`returnBookData: ${JSON.stringify(returnBookData)}`);
                 return { success: true, message: "getstoryList success", value: returnBookData };
             }
             catch (e) {
