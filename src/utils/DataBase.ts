@@ -3,6 +3,8 @@ import { userModel } from "../models/userModel";
 import { storyModel } from "../models/storyModel";
 import { CurrentTime } from "./tools/tool";
 import { userInterface } from "../interfaces/userInterface";
+import { _ } from "ollama/dist/shared/ollama.51f6cea9";
+import { BookManageListInterface } from "../interfaces/BookManageListInterface";
 
 export class DataBase{
     DB!: typeof import("mongoose");
@@ -48,15 +50,32 @@ export class DataBase{
     }
 
     // 用使用者id 拿sdtory list
+    // TODO 設定 BookManageListInterface 並回傳
     static async getstoryList(userId: string): Promise<any> {
         try {
-            let returnValue: any = await userModel.findById(userId); // 使用 findById 根据 _id 查询
-            if (!returnValue) {
+            let returnUserData: any = await userModel.findById(userId);
+            console.log(`returnValue: ${JSON.stringify(returnUserData)}`)
+            if (!returnUserData) {
                 return { success: false, message: 'getstoryList fail, user not found' };
             }
-            let returnValue_booklist: userInterface['booklist'] = returnValue.booklist!;
-            console.log(`getstoryList returnValue_booklist = ${JSON.stringify(returnValue_booklist)}`);
-            return { success: true, message: "getstoryList success", value: returnValue_booklist };
+            let returnUserData_booklist: userInterface['booklist'] = returnUserData.booklist!;
+            const returnBookData:BookManageListInterface[] = await Promise.all(returnUserData_booklist.map(async bookId => {
+                const bookData = await storyModel.findById(bookId);
+                if (!bookData) {
+                    return {
+                        bookId: '',
+                        bookName: '',
+                        bookFirstImageBase64: ''
+                    };
+                }
+                return {
+                    bookId: bookData._id.toString(),
+                    bookName: bookData.storyInfo,
+                    bookFirstImageBase64: bookData.image_base64?.[0] || ''
+                };
+            }));
+            console.log(`returnBookData: ${JSON.stringify(returnBookData)}`)
+            return { success: true, message: "getstoryList success", value: returnBookData };
         } catch (e:any) {
             return { success: false, message: `getstoryList fail ${e.message}` };
         }
@@ -101,7 +120,7 @@ export class DataBase{
         }
     }
 
-    // TODO 拿全部的書籍(array)
+    //TODO 拿全部的書籍(array)
 
 
     //TODO 設定書本是否為喜歡的書籍(修改books is_favorite)

@@ -17,7 +17,7 @@ class StoryRoute extends Route_1.Route {
         this.router.get(`${this.url}`, this.Controller.test);
         this.router.get(`${this.url}/ta`, this.Controller.testOpenaiApi);
         this.router.post(`${this.url}/startstory`, this.Controller.StartStory);
-        this.router.get(`${this.url}/getstorylist_fdb`, this.Controller.GetStorylistFDB);
+        this.router.get(`${this.url}/getstorylist_fdb`, autherMiddleware_1.authenticateToken, this.Controller.GetStorylistFDB);
         this.router.post(`${this.url}/llm/genstory`, autherMiddleware_1.authenticateToken, this.Controller.LLMGenStory);
         this.router.post(`${this.url}/llm/genimageprompt`, this.Controller.genimageprompt);
         this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
@@ -33,6 +33,7 @@ class StoryRoute extends Route_1.Route {
         // http://localhost:7943/story/image/re_gen_image
         // http://localhost:7943/story/voice/savevoice
         // http://localhost:7943/story/voice/take_voice
+        // https://163.13.202.128/api/story/getstorylist_fdb
     }
 }
 exports.StoryRoute = StoryRoute;

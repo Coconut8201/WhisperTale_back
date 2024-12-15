@@ -60,16 +60,34 @@ class DataBase {
         });
     }
     // 用使用者id 拿sdtory list
+    // TODO 設定 BookManageListInterface 並回傳
     static getstoryList(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let returnValue = yield userModel_1.userModel.findById(userId); // 使用 findById 根据 _id 查询
-                if (!returnValue) {
+                let returnUserData = yield userModel_1.userModel.findById(userId);
+                console.log(`returnValue: ${JSON.stringify(returnUserData)}`);
+                if (!returnUserData) {
                     return { success: false, message: 'getstoryList fail, user not found' };
                 }
-                let returnValue_booklist = returnValue.booklist;
-                console.log(`getstoryList returnValue_booklist = ${JSON.stringify(returnValue_booklist)}`);
-                return { success: true, message: "getstoryList success", value: returnValue_booklist };
+                let returnUserData_booklist = returnUserData.booklist;
+                const returnBookData = yield Promise.all(returnUserData_booklist.map((bookId) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    const bookData = yield storyModel_1.storyModel.findById(bookId);
+                    if (!bookData) {
+                        return {
+                            bookId: '',
+                            bookName: '',
+                            bookFirstImageBase64: ''
+                        };
+                    }
+                    return {
+                        bookId: bookData._id.toString(),
+                        bookName: bookData.storyInfo,
+                        bookFirstImageBase64: ((_a = bookData.image_base64) === null || _a === void 0 ? void 0 : _a[0]) || ''
+                    };
+                })));
+                console.log(`returnBookData: ${JSON.stringify(returnBookData)}`);
+                return { success: true, message: "getstoryList success", value: returnBookData };
             }
             catch (e) {
                 return { success: false, message: `getstoryList fail ${e.message}` };
@@ -109,7 +127,7 @@ class DataBase {
             }
         });
     }
-    // TODO 拿全部的書籍(array)
+    //TODO 拿全部的書籍(array)
     //TODO 設定書本是否為喜歡的書籍(修改books is_favorite)
     //TODO 確認名字是否為唯一，是的話存入資料庫中
     static isNameTaken(name) {

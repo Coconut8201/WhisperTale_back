@@ -18,11 +18,11 @@ const authenticateToken = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     var _a;
     try {
         const token = req.cookies.authToken || ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
-        console.log('===== Auth Debug =====');
-        console.log('Authorization:', req.headers.authorization);
-        console.log('Cookies:', req.cookies);
-        console.log('Token:', token);
-        console.log('====================');
+        // console.log('===== Auth Debug =====');
+        // console.log('Authorization:', req.headers.authorization);
+        // console.log('Cookies:', req.cookies);
+        // console.log('Token:', token);
+        // console.log('====================');
         if (!token || token === 'undefined') {
             return res.status(401).json({
                 success: false,

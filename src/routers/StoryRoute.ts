@@ -17,7 +17,7 @@ export class StoryRoute extends Route{
       this.router.get(`${this.url}`, this.Controller.test);
       this.router.get(`${this.url}/ta`, this.Controller.testOpenaiApi);
       this.router.post(`${this.url}/startstory`, this.Controller.StartStory);
-      this.router.get(`${this.url}/getstorylist_fdb`, this.Controller.GetStorylistFDB);
+      this.router.get(`${this.url}/getstorylist_fdb`, authenticateToken,this.Controller.GetStorylistFDB);
       this.router.post(`${this.url}/llm/genstory`, authenticateToken,this.Controller.LLMGenStory);
       this.router.post(`${this.url}/llm/genimageprompt`, this.Controller.genimageprompt);
 
@@ -36,5 +36,7 @@ export class StoryRoute extends Route{
 
       // http://localhost:7943/story/voice/savevoice
       // http://localhost:7943/story/voice/take_voice
+
+      // https://163.13.202.128/api/story/getstorylist_fdb
    }
 }

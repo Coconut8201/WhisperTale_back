@@ -106,18 +106,36 @@ class StoryController extends Controller_1.Controller {
     }
     //拿資料庫故事
     GetStorylistFDB(Request, Response) {
-        let { userId } = Request.query;
-        console.log(`userId = ${userId}`);
-        DataBase_1.DataBase.getstoryList(userId).then((result) => {
-            if (result.success) {
-                return Response.status(200).send(result.message);
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userId = Request.user.id;
+                if (!userId) {
+                    return Response.status(400).json({
+                        success: false,
+                        message: 'User ID is required'
+                    });
+                }
+                const result = yield DataBase_1.DataBase.getstoryList(userId);
+                if (result.success) {
+                    return Response.send({
+                        success: true,
+                        data: result.value
+                    });
+                }
+                else {
+                    return Response.status(403).json({
+                        success: false,
+                        message: result.message
+                    });
+                }
             }
-            else {
-                return Response.status(403).send(result.message);
+            catch (error) {
+                console.error('GetStorylistFDB fail:', error);
+                return Response.status(500).json({
+                    success: false,
+                    message: 'Internal server error'
+                });
             }
-        }).catch((e) => {
-            console.error(`GetStorylistFDB fail: ${e.message}`);
-            return Response.status(400).send('GetStorylistFDB fail');
         });
     }
     genimageprompt(Request, Response) {

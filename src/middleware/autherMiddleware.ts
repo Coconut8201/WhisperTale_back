@@ -15,11 +15,11 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     try {
         const token = req.cookies.authToken || req.headers.authorization?.split(' ')[1];
         
-        console.log('===== Auth Debug =====');
-        console.log('Authorization:', req.headers.authorization);
-        console.log('Cookies:', req.cookies);
-        console.log('Token:', token);
-        console.log('====================');
+        // console.log('===== Auth Debug =====');
+        // console.log('Authorization:', req.headers.authorization);
+        // console.log('Cookies:', req.cookies);
+        // console.log('Token:', token);
+        // console.log('====================');
 
         if (!token || token === 'undefined') {
             return res.status(401).json({ 

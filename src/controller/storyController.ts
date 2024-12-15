@@ -30,20 +30,35 @@ export class StoryController extends Controller {
   }
 
   //拿資料庫故事
-  public GetStorylistFDB(Request: Request, Response: Response) {
-    let { userId } = Request.query;
-    console.log(`userId = ${userId}`);
-    DataBase.getstoryList(userId as string).then((result) => {
-      if (result.success){
-        return Response.status(200).send(result.message);
-      }else{
-        return Response.status(403).send(result.message);
-      }
-    }).catch((e:any)=>{
-      console.error(`GetStorylistFDB fail: ${e.message}`);
-      return Response.status(400).send('GetStorylistFDB fail');
-    });
-  }
+  public async GetStorylistFDB(Request: Request, Response: Response) {
+    try {
+        const userId = (Request as any).user.id;
+        if (!userId) {
+            return Response.status(400).json({
+                success: false,
+                message: 'User ID is required'
+            });
+        }
+        const result = await DataBase.getstoryList(userId);
+        if (result.success) {
+            return Response.send({
+                  success: true,
+                  data: result.value
+              })
+        } else {
+            return Response.status(403).json({
+                success: false,
+                message: result.message
+            });
+        }
+    } catch (error) {
+        console.error('GetStorylistFDB fail:', error);
+        return Response.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+}
 
   /**
    * 生成故事
