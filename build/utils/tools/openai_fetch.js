@@ -24,7 +24,7 @@ function openAIFetch(message) {
     return __awaiter(this, void 0, void 0, function* () {
         // Non-streaming:
         const completion = yield openai.chat.completions.create({
-            model: 'gpt-4',
+            model: 'gpt-4o',
             messages: [{ role: 'user', content: message }],
         });
         return (_c = (_b = (_a = completion.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) !== null && _c !== void 0 ? _c : "";

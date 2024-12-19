@@ -82,10 +82,10 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
 
         await delayedExecution();
 
-        //! 這邊取消註解
+        //! 解除註解
         // console.log(`start GenImagePrompt\n`);
         // await GenImagePrompt(generated_story_array || [], Saved_storyID);
-        // await LLMGen_release(); // 清除Ollama model 占用記憶體
+        // // await LLMGen_release(); // 清除Ollama model 占用記憶體
 
         // // Fetch the updated story data to get the generated image prompts
         // const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);

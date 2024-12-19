@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function openAIFetch(message: string) {
     // Non-streaming:
     const completion = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: message }],
     });
     return completion.choices[0]?.message?.content ?? "";

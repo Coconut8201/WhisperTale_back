@@ -118,13 +118,7 @@ export class DataBase{
             console.log(`Update_StoryImage_Base64 fail, ${e}`)
         }
     }
-
-    //TODO 拿全部的書籍(array)
-
-
-    //TODO 設定書本是否為喜歡的書籍(修改books is_favorite)
-
-    //TODO 確認名字是否為唯一，是的話存入資料庫中
+    
     static async isNameTaken(name:string):Promise<boolean>{
         const user = await userModel.findOne({ userName:name });
         return user !== null;

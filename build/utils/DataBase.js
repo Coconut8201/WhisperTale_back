@@ -126,9 +126,6 @@ class DataBase {
             }
         });
     }
-    //TODO 拿全部的書籍(array)
-    //TODO 設定書本是否為喜歡的書籍(修改books is_favorite)
-    //TODO 確認名字是否為唯一，是的話存入資料庫中
     static isNameTaken(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield userModel_1.userModel.findOne({ userName: name });

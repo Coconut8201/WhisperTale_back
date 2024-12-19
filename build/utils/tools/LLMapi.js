@@ -94,7 +94,7 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
         // }
         // const story_1st:string = await LLMGenChat(payload1);
         // 第一次生成(openai)
-        const prompt = `你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求創作一個故事:
+        const prompt = `你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求使用繁體中文創作一個故事:
                 故事主角: ${storyRoleForm.mainCharacter}
                 其他角色: ${storyRoleForm.otherCharacters} 
                 故事情節: ${storyRoleForm.description}
@@ -109,8 +109,9 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
                 7. 故事段落用 \n\n 換行
                 請發揮你的創意,為小朋友們創作一個精彩的故事!
                 請根據上述要求創作一個適合兒童的故事。`;
-        //! 這邊要取消註解        
+        //! 解除註解
         // const story_1st:string = await openAIFetch(prompt);
+        //! 解除註解
         // 第二次生成(openai)
         // const prompt2 = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請參考根據故事設定：
         //         故事主角: ${storyRoleForm.mainCharacter}
@@ -118,8 +119,7 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
         //         故事情節: ${storyRoleForm.description}
         //         其他角色設定: ${storyRoleForm.relationships}
         //         寫出的故事${story_1st}
-        //         進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落麻煩用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:a段落故事\n\nb段落故事\n\n.....`;
-        //! 這邊要取消註解  
+        //         進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落使用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:故事標題\n\na段落故事\n\nb段落故事\n\n.....`; 
         // const story_2nd:string = await openAIFetch(prompt2);
         const story_2nd = `在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。
 
@@ -155,7 +155,6 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
         if (!saveResult.success) {
             throw new Error('儲存故事時發生錯誤');
         }
-        //! 這邊取消註解
         // return Saved_storyID;
         return '6759b1752ada2b6675270d17';
     }
