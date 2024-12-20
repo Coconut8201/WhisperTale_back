@@ -83,18 +83,18 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             .filter(item => item !== "");
         yield (0, exports.delayedExecution)();
         //! 解除註解
-        // console.log(`start GenImagePrompt\n`);
-        // await GenImagePrompt(generated_story_array || [], Saved_storyID);
-        // // await LLMGen_release(); // 清除Ollama model 占用記憶體
-        // // Fetch the updated story data to get the generated image prompts
-        // const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);
-        // const generated_story_image_prompt = updatedStory.image_prompt;
-        // if (!generated_story_image_prompt || generated_story_image_prompt.length === 0) {
-        //     throw new Error('No image prompts generated，圖片提示生成失敗');
-        // }
-        // console.log(`start GenImage`);
-        // await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
-        // console.log(`start getVoices`);
+        console.log(`start GenImagePrompt\n`);
+        yield (0, exports.GenImagePrompt)(generated_story_array || [], Saved_storyID);
+        // await LLMGen_release(); // 清除Ollama model 占用記憶體
+        // Fetch the updated story data to get the generated image prompts
+        const updatedStory = yield DataBase_1.DataBase.getStoryById(Saved_storyID);
+        const generated_story_image_prompt = updatedStory.image_prompt;
+        if (!generated_story_image_prompt || generated_story_image_prompt.length === 0) {
+            throw new Error('No image prompts generated，圖片提示生成失敗');
+        }
+        console.log(`start GenImage`);
+        yield (0, exports.GenImage)(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
+        console.log(`start getVoices`);
         const joinedStoryTale = generated_story_array.reduce((acc, curr, i) => {
             if (i % 2 === 0) {
                 if (i + 1 < generated_story_array.length) {

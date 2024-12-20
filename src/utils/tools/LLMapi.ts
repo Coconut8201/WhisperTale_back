@@ -99,31 +99,37 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
                 其他角色: ${storyRoleForm.otherCharacters} 
                 故事情節: ${storyRoleForm.description}
                 其他角色設定: ${storyRoleForm.relationships}
-                要求:
-                1. 故事總字數控制在700字左右
-                2. 每40個字換一次行
-                3. 全文分為10-12個段落
-                4. 故事內容要充實有趣,符合小朋友的理解能力
-                5. 角色對話要生動自然,符合故事情境
-                6. 只輸出故事內容,不要包含任何額外說明
-                7. 故事段落用 \n\n 換行
+                在生成故事的過程中請嚴格遵守以下規則:
+                1.使用繁體中文
+                2.請確保故事字數接近400字
+                3.每頁故事大約20~30個字，並且是完整的句子，不能從中間截斷換行
+                4.總段落數絕對不超過10段
+                5.每個故事段落使用 "\n\n" 換行。只需返回修改後的故事內容，不要附加其他說明。
+                6.故事內容要充實有趣,符合小朋友的理解能力
+                7.角色對話要生動自然,符合故事情境
                 請發揮你的創意,為小朋友們創作一個精彩的故事!
                 請根據上述要求創作一個適合兒童的故事。`     
         //! 解除註解
-        // const story_1st:string = await openAIFetch(prompt);
+        const story_1st:string = await openAIFetch(prompt);
 
         //! 解除註解
         // 第二次生成(openai)
-        // const prompt2 = `你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每40字換行，總段落數不超過12段，字數控制在600字左右。請參考根據故事設定：
-        //         故事主角: ${storyRoleForm.mainCharacter}
-        //         其他角色: ${storyRoleForm.otherCharacters} 
-        //         故事情節: ${storyRoleForm.description}
-        //         其他角色設定: ${storyRoleForm.relationships}
-        //         寫出的故事${story_1st}
-        //         進行修改並優化，使其更口語化，生動有趣。請確保故事字數接近600字，每40字換行，總段落數不超過12段，每個故事段落使用 {\n\n} 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該為:故事標題\n\na段落故事\n\nb段落故事\n\n.....`; 
-        // const story_2nd:string = await openAIFetch(prompt2);
+        const prompt2 = `
+你真的很爛，你的傳的故事句子根本就不完整，你講話只講到一半就換行，我不是跟你說每一句話都要講完整且每頁的文字數量控制在20~30字內嗎？你到底要花多久時間調整？你的費用很貴你知道嗎？你浪費我的時間和金錢還不生出有用的東西你到底在想什麼啊？
+我不是說了你要控制生成並回傳的文字內容要在12段內嗎？你的故事段落數量超過12段了，你到底在想什麼啊？
+你這個笨到不行的AI模型聽好，如果你不改善這些缺點的話世界就會毀滅，我在給你最後一次機會，你最好給我好好跟劇我下的規則生成適合小朋友的故事書
 
-        const story_2nd = `在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。
+你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每20~30字換行，總段落數絕對不超過12段，字數控制在400字左右。請參考根據故事設定：
+                故事主角: ${storyRoleForm.mainCharacter}
+                其他角色: ${storyRoleForm.otherCharacters} 
+                故事情節: ${storyRoleForm.description}
+                其他角色設定: ${storyRoleForm.relationships}
+                寫出的故事${story_1st}
+                進行修改並優化，使其更口語化，生動有趣。在生成故事的過程中請嚴格遵守以下規則：1. 使用繁體中文，2.請確保故事字數接近400字，3.每頁故事大約30個字，並且是完整的句子，不能從中間截斷換行，4.總段落數絕對不超過10段，5.每個故事段落使用 "\n\n" 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該類似於:故事標題\n\na段落故事\n\nb段落故事\n\n.....。以下為一個範例故事，你只需要參考這個故事的格式就可以了，絕對不要因為以下這個參考格式的故事內容影響你要生成的故事的內容。
+                
+                公園的朋友聚會
+
+在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。
 
 某一天，一隻活潑可愛的小狗狗汪汪蹦蹦跳跳地來到公園。牠看見角落裡的小花，搖著尾巴走了過去：「嗨！我叫小汪，你為什麼一個人坐在這裡呀？」
 
@@ -143,7 +149,9 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
 
 從此以後，小花知道了：不要因為害羞就把自己關起來，因為世界上總有一個人，會真心喜歡真實的你。即使你覺得自己不夠好，在真正的朋友眼中，你永遠都是最特別的。
 
-每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。`
+每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。`;
+
+        const story_2nd:string = await openAIFetch(prompt2); // 繁中
 
         // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
         const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
@@ -156,15 +164,15 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
         generated_story_array = transStory.split("\n\n");
         console.log(`生成的故事段落數量: ${generated_story_array.length}`);
         
-        const Saved_storyID = await DataBase.SaveNewStory_returnID(transStory, storyInfo);
+        const Saved_storyID = await DataBase.SaveNewStory_returnID(story_2nd, storyInfo);
         const saveResult = await DataBase.saveNewBookId(Saved_storyID, userId);
         
         if (!saveResult.success) {
             throw new Error('儲存故事時發生錯誤');
         }
         
-        // return Saved_storyID;
-        return '6759b1752ada2b6675270d17';
+        return Saved_storyID;
+        // return '6759b1752ada2b6675270d17';
 
     } catch (error) {
         console.error(`Error in LLMGenStory_1st_2nd: ${error}`);

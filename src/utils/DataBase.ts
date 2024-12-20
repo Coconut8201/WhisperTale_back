@@ -3,7 +3,6 @@ import { userModel } from "../models/userModel";
 import { storyModel } from "../models/storyModel";
 import { CurrentTime } from "./tools/tool";
 import { userInterface } from "../interfaces/userInterface";
-import { _ } from "ollama/dist/shared/ollama.51f6cea9";
 import { BookManageListInterface } from "../interfaces/BookManageListInterface";
 
 export class DataBase{
@@ -49,8 +48,6 @@ export class DataBase{
         }
     }
 
-    // 用使用者id 拿sdtory list
-    // TODO 設定 BookManageListInterface 並回傳
     static async getstoryList(userId: string): Promise<any> {
         try {
             let returnUserData: any = await userModel.findById(userId);
@@ -59,21 +56,34 @@ export class DataBase{
                 return { success: false, message: 'getstoryList fail, user not found' };
             }
             let returnUserData_booklist: userInterface['booklist'] = returnUserData.booklist!;
-            const returnBookData:BookManageListInterface[] = await Promise.all(returnUserData_booklist.map(async bookId => {
-                const bookData = await storyModel.findById(bookId);
-                if (!bookData) {
+            const validBookIds = await Promise.all(
+                returnUserData_booklist.map(async bookId => ({
+                    bookId,
+                    exists: await storyModel.exists({ _id: bookId })
+                }))
+            );
+            
+            returnUserData_booklist = validBookIds
+                .filter(item => item.exists)
+                .map(item => item.bookId);
+            
+            const returnBookData: BookManageListInterface[] = await Promise.all(
+                returnUserData_booklist.map(async bookId => {
+                    const bookData = await storyModel.findById(bookId);
+                    if (!bookData) {
+                        return {
+                            bookId: '',
+                            bookName: '',
+                            bookFirstImageBase64: ''
+                        };
+                    }
                     return {
-                        bookId: '',
-                        bookName: '',
-                        bookFirstImageBase64: ''
+                        bookId: bookData._id.toString(),
+                        bookName: bookData.storyInfo,
+                        bookFirstImageBase64: bookData.image_base64?.[0] || ''
                     };
-                }
-                return {
-                    bookId: bookData._id.toString(),
-                    bookName: bookData.storyInfo,
-                    bookFirstImageBase64: bookData.image_base64?.[0] || ''
-                };
-            }));
+                })
+            );
             return { success: true, message: "getstoryList success", value: returnBookData };
         } catch (e:any) {
             return { success: false, message: `getstoryList fail ${e.message}` };

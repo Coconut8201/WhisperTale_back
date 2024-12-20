@@ -59,8 +59,6 @@ class DataBase {
             }
         });
     }
-    // 用使用者id 拿sdtory list
-    // TODO 設定 BookManageListInterface 並回傳
     static getstoryList(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -70,6 +68,15 @@ class DataBase {
                     return { success: false, message: 'getstoryList fail, user not found' };
                 }
                 let returnUserData_booklist = returnUserData.booklist;
+                const validBookIds = yield Promise.all(returnUserData_booklist.map((bookId) => __awaiter(this, void 0, void 0, function* () {
+                    return ({
+                        bookId,
+                        exists: yield storyModel_1.storyModel.exists({ _id: bookId })
+                    });
+                })));
+                returnUserData_booklist = validBookIds
+                    .filter(item => item.exists)
+                    .map(item => item.bookId);
                 const returnBookData = yield Promise.all(returnUserData_booklist.map((bookId) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     const bookData = yield storyModel_1.storyModel.findById(bookId);
