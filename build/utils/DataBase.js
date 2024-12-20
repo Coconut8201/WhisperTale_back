@@ -89,7 +89,7 @@ class DataBase {
                     }
                     return {
                         bookId: bookData._id.toString(),
-                        bookName: bookData.storyInfo,
+                        bookName: bookData.storyTale.split('\n\n')[0] || '',
                         bookFirstImageBase64: ((_a = bookData.image_base64) === null || _a === void 0 ? void 0 : _a[0]) || ''
                     };
                 })));

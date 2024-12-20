@@ -79,7 +79,7 @@ export class DataBase{
                     }
                     return {
                         bookId: bookData._id.toString(),
-                        bookName: bookData.storyInfo,
+                        bookName: bookData.storyTale.split('\n\n')[0] || '',
                         bookFirstImageBase64: bookData.image_base64?.[0] || ''
                     };
                 })
