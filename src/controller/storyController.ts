@@ -106,12 +106,6 @@ export class StoryController extends Controller {
     }
   }
 
-  public async genimageprompt(Request:Request, Response:Response){
-    const story_slice = Request.body.story_slice!;
-    const res= await GenImg_prompt_En(story_slice);
-    Response.send(`res = ${res}`);
-  }
-
   public async sdOption(Request:Request, Response:Response){
     let MODEL_NAME:string = Request.body.modelname || "fantasyWorld_v10.safetensors";
     Response.send(await sdModelOption(MODEL_NAME));

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -w",
     "start": "nodemon ./build/app.js",
-    "dev": "concurrently \"tsc -w\" \"nodemon build/app.js\" ",
+    "dev": "concurrently \"tsc -w\" \"nodemon --signal SIGTERM build/app.js\" ",
     "noportdev": "concurrently \"tsc -w\" \"kill-port 7943 && nodemon build/app.js\""
   },
   "author": "",

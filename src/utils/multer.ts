@@ -1,31 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-import multer from "multer";
 import dotenv from 'dotenv';
 dotenv.config();
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, process.env.dev_saveRecording!);
-    },
-    filename: (req, file, cb) => {
-        cb(null, "aaa.wav");
-    },
-});
-
-export const upload = multer({
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/\.(wav|mp3)$/)) {
-            cb(null, true)
-        } else {
-            cb(new Error('Please upload an image'))
-        }
-    },
-});
-
-
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');

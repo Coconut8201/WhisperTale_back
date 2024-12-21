@@ -1,7 +1,7 @@
 import { VoiceController } from "../controller/voiceController";
 import { Route } from "../interfaces/Route";
 import { authenticateToken } from "../middleware/autherMiddleware";
-import { upload } from "../utils/multer";
+import upload from "../middleware/multerMiddleware";
 
 export class VoiceRoute extends Route {
     protected url: string = '';
@@ -22,7 +22,7 @@ export class VoiceRoute extends Route {
     // https://163.13.202.128/api/voiceset/take_voice
     protected setRoutes(): void {
         this.router.get(`${this.url}`,this.Controller.test);
-        this.router.post(`${this.url}/uploadvoices`,authenticateToken,upload.single("file"),this.Controller.UploadVoice);
+        this.router.post(`${this.url}/uploadvoices`,authenticateToken,upload.array('files', 10),this.Controller.UploadVoice);
         this.router.get(`${this.url}/getVoiceList`,authenticateToken,this.Controller.getVoiceList);
         this.router.post(`${this.url}/take_voice`, authenticateToken,this.Controller.takeVoice);
         this.router.post(`${this.url}/testwhisper`,this.Controller.testwhisper);

@@ -140,13 +140,6 @@ class StoryController extends Controller_1.Controller {
             }
         });
     }
-    genimageprompt(Request, Response) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const story_slice = Request.body.story_slice;
-            const res = yield (0, LLM_fetch_images_1.GenImg_prompt_En)(story_slice);
-            Response.send(`res = ${res}`);
-        });
-    }
     sdOption(Request, Response) {
         return __awaiter(this, void 0, void 0, function* () {
             let MODEL_NAME = Request.body.modelname || "fantasyWorld_v10.safetensors";

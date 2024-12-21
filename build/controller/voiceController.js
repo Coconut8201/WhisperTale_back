@@ -17,36 +17,126 @@ const Controller_1 = require("../interfaces/Controller");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const fetch_1 = require("../utils/tools/fetch");
-const opencc_js_1 = __importDefault(require("opencc-js"));
-const converter = opencc_js_1.default.Converter({ from: 'tw', to: 'cn' });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class VoiceController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
-        // 上傳聲音並生成語音
+        // 上傳多個聲音檔案並生成info.txt 資訊檔案
+        // public UploadVoice = async(req: Request, res: Response) => {
+        //     if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        //         return res.status(400).send("未上傳任何檔案");
+        //     }
+        //     const userId = (req as any).user?.id;
+        //     if (!userId) {
+        //         return res.status(401).send("未授權的訪問");
+        //     }
+        //     const audioName = req.body.audioName;
+        //     const userFolder = path.join(process.env.dev_saveRecording!, `user_${userId}`);
+        //     const audioFolder = path.join(userFolder, audioName);
+        //     const infoFullPath = path.join(audioFolder, `info.txt`);
+        //     try {
+        //         await fs.promises.mkdir(audioFolder, { recursive: true });
+        //         const results = [];
+        //         // 逐個處理檔案，使用 for...of 而不是 map
+        //         for (let i = 0; i < req.files.length; i++) {
+        //             const file = req.files[i];
+        //             try {
+        //                 // 產生新檔名
+        //                 const partNumber = String(i + 1).padStart(1, '0');
+        //                 const newFileName = `${audioName}_${partNumber}.wav`;
+        //                 const fullPath = path.join(audioFolder, newFileName);
+        //                 // 移動並重命名檔案
+        //                 await fs.promises.copyFile(file.path, fullPath);
+        //                 // 檢查暫存檔是否還存在再刪除
+        //                 if (fs.existsSync(file.path)) {
+        //                     try {
+        //                         await fs.promises.unlink(file.path);
+        //                     } catch (unlinkError) {
+        //                         console.warn(`刪除暫存檔失敗: ${file.path}`, unlinkError);
+        //                     }
+        //                 }
+        //                 results.push({
+        //                     originalName: file.originalname,
+        //                     newName: newFileName,
+        //                     path: fullPath
+        //                 });
+        //             } catch (error) {
+        //                 console.error(`處理檔案 ${file.originalname} 時發生錯誤:`, error);
+        //                 // 繼續處理下一個檔案，而不是中斷整個流程
+        //                 continue;
+        //             }
+        //         }
+        //         // 如果沒有成功處理任何檔案
+        //         if (results.length === 0) {
+        //             return res.status(500).json({
+        //                 code: 500,
+        //                 message: "所有檔案處理失敗"
+        //             });
+        //         }
+        //         // TODO 檔案內容識別
+        //         // for (const fullPath of savedPaths) {
+        //         //     const infoTxtDontknowZh = await whisperCall(fullPath);
+        //         //     if (!infoTxtDontknowZh) {
+        //         //         console.warn(`Whisper 未能識別檔案 ${fullPath} 的內容`);
+        //         //         continue;
+        //         //     }
+        //         //     try {
+        //         //         const infoTxtZh: string = converter(infoTxtDontknowZh) + '。';
+        //         //         if (infoTxtZh) {
+        //         //             await fs.promises.appendFile(infoFullPath, infoTxtZh);
+        //         //         }
+        //         //     } catch (convErr) {
+        //         //         console.error(`轉換文字失敗: ${infoTxtDontknowZh}`, convErr);
+        //         //         await fs.promises.appendFile(infoFullPath, infoTxtDontknowZh + '。');
+        //         //     }
+        //         // }
+        //         res.send({code: 200, message: "所有音檔處理完成"});
+        //     } catch(err: any) {
+        //         console.error(`Error in UploadVoice:`, err);
+        //         res.status(500).send({code: 500, message: err.message});
+        //     }
+        // }
         this.UploadVoice = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
-            if (!req.file) {
-                return res.status(400).send("No file uploaded.");
-            }
-            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-            if (!userId) {
-                return res.status(401).send("未授權的訪問");
-            }
-            const file = req.file;
-            const audioName = req.body.audioName;
-            const filePath = process.env.dev_saveRecording + `/user_${userId}/${audioName}`; // 存放使用者聲音的目錄
             try {
-                yield fs_1.default.promises.mkdir(filePath, { recursive: true });
-                const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
-                yield fs_1.default.promises.rename(file.path, fullPath);
-                const infoTxtDontknowZh = yield (0, fetch_1.whisperCall)(fullPath);
-                const infoTxtZh = converter(infoTxtDontknowZh) + '。';
-                const infoFullPath = path_1.default.join(filePath, 'info.txt');
-                yield fs_1.default.promises.writeFile(infoFullPath, infoTxtZh);
-                console.log(`File ${audioName} saved successfully in ${filePath} and info.txt is done.`);
-                res.send({ code: 200, message: "train voice model success" });
+                const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+                if (!userId) {
+                    return res.status(401).send("未授權的訪問");
+                }
+                const audioName = req.body.audioName;
+                const userFolder = path_1.default.join(process.env.dev_saveRecording, `user_${userId}`);
+                const tempFolder = path_1.default.join(userFolder, 'temp');
+                const audioFolder = path_1.default.join(userFolder, audioName);
+                yield fs_1.default.promises.mkdir(audioFolder, { recursive: true });
+                const files = yield fs_1.default.promises.readdir(tempFolder);
+                const results = [];
+                for (let i = 0; i < files.length; i++) {
+                    const fileName = files[i];
+                    const sourcePath = path_1.default.join(tempFolder, fileName);
+                    const partNumber = String(i + 1).padStart(1, '0');
+                    const newFileName = `${audioName}_${partNumber}.wav`;
+                    const targetPath = path_1.default.join(audioFolder, newFileName);
+                    try {
+                        yield fs_1.default.promises.rename(sourcePath, targetPath);
+                        results.push({
+                            originalName: fileName,
+                            newName: newFileName,
+                            path: targetPath
+                        });
+                    }
+                    catch (error) {
+                        console.error(`移動檔案 ${fileName} 時發生錯誤:`, error);
+                        continue;
+                    }
+                }
+                if (results.length === 0) {
+                    return res.status(500).json({
+                        code: 500,
+                        message: "所有檔案處理失敗"
+                    });
+                }
+                res.send({ code: 200, message: "所有音檔處理完成", data: results });
             }
             catch (err) {
                 console.error(`Error in UploadVoice:`, err);
@@ -65,7 +155,7 @@ class VoiceController extends Controller_1.Controller {
                 res.json({ code: 200, listData: directories });
             }
             catch (error) {
-                console.error('讀取目錄時發生錯誤:', error);
+                console.error('讀目錄時發生錯誤:', error);
                 res.status(500).json({
                     code: 500,
                     listData: [],

@@ -23,7 +23,6 @@ export class StoryRoute extends Route{
          res.setTimeout(600000);
          next();
      },this.Controller.LLMGenStory);
-      this.router.post(`${this.url}/llm/genimageprompt`, this.Controller.genimageprompt);
 
       this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
       this.router.get(`${this.url}/images/sdmodellist`, this.Controller.GetSDModelList);
