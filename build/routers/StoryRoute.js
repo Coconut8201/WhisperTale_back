@@ -18,7 +18,11 @@ class StoryRoute extends Route_1.Route {
         this.router.get(`${this.url}/ta`, this.Controller.testOpenaiApi);
         this.router.post(`${this.url}/startstory`, this.Controller.StartStory);
         this.router.get(`${this.url}/getstorylist_fdb`, autherMiddleware_1.authenticateToken, this.Controller.GetStorylistFDB);
-        this.router.post(`${this.url}/llm/genstory`, autherMiddleware_1.authenticateToken, this.Controller.LLMGenStory);
+        this.router.post(`${this.url}/llm/genstory`, autherMiddleware_1.authenticateToken, (req, res, next) => {
+            req.setTimeout(600000);
+            res.setTimeout(600000);
+            next();
+        }, this.Controller.LLMGenStory);
         this.router.post(`${this.url}/llm/genimageprompt`, this.Controller.genimageprompt);
         this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
         this.router.get(`${this.url}/images/sdmodellist`, this.Controller.GetSDModelList);

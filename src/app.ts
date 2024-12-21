@@ -59,6 +59,11 @@ app.use(express.json());
 for (const route of router) {
     app.use(route.getRouter())
 }
+app.use((req, res, next) => {
+    req.setTimeout(600000);
+    res.setTimeout(600000);
+    next();
+});
 
 //=============================================
 // // //dev 開發

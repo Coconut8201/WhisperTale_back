@@ -66,34 +66,6 @@ exports.LLMGenChat = LLMGenChat;
 const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 0, void 0, void 0, function* () {
     let storyInfo = storyRoleForm.description;
     try {
-        // let payload1: object = {
-        //     "model": "Llama3.1-8B-Chinese-Chat.Q8_0.gguf:latest",
-        //     "prompt": `
-        //         <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-        //         你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求創作一個故事:
-        //         故事主角: ${storyRoleForm.mainCharacter}
-        //         其他角色: ${storyRoleForm.otherCharacters} 
-        //         故事情節: ${storyRoleForm.description}
-        //         其他角色設定: ${storyRoleForm.relationships}
-        //         要求:
-        //         1. 故事總字數控制在700字左右
-        //         2. 每40個字換一次行
-        //         3. 全文分為10-12個段落
-        //         4. 故事內容要充實有趣,符合小朋友的理解能力
-        //         5. 角色對話要生動自然,符合故事情境
-        //         6. 只輸出故事內容,不要包含任何額外說明
-        //         7. 故事段落用 \n\n 換行
-        //         請發揮你的創意,為小朋友們創作一個精彩的故事!
-        //         <|eot_id|><|start_header_id|>user<|end_header_id|>
-        //         請根據上述要求創作一個適合兒童的故事。
-        //         <|eot_id|><|start_header_id|>assistant<|end_header_id|>`,
-        //     "stream": false,
-        //     "options":{
-        //         "num_ctx": 700,
-        //         "num_predict": 100,
-        //     },
-        // }
-        // const story_1st:string = await LLMGenChat(payload1);
         // 第一次生成(openai)
         const prompt = `你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求使用繁體中文創作一個故事:
                 故事主角: ${storyRoleForm.mainCharacter}

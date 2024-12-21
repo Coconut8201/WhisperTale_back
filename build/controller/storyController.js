@@ -36,6 +36,8 @@ class StoryController extends Controller_1.Controller {
          * }
          */
         this.LLMGenStory = (Request, Response) => __awaiter(this, void 0, void 0, function* () {
+            Request.setTimeout(600000);
+            Response.setTimeout(600000);
             if (!(0, tool_1.isObjectValid)(Request.body)) {
                 return Response.send({
                     code: 403,

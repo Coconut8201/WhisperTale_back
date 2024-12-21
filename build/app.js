@@ -59,6 +59,11 @@ app.use(express_1.default.json());
 for (const route of Routers_1.router) {
     app.use(route.getRouter());
 }
+app.use((req, res, next) => {
+    req.setTimeout(600000);
+    res.setTimeout(600000);
+    next();
+});
 //=============================================
 // // //dev 開發
 // app.listen(port, () => {

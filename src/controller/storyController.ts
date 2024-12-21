@@ -70,6 +70,8 @@ export class StoryController extends Controller {
    * }
    */
   public LLMGenStory = async(Request: Request, Response: Response) => {
+    Request.setTimeout(600000);
+    Response.setTimeout(600000);
     if (!isObjectValid(Request.body)) {
       return Response.send({
           code: 403,

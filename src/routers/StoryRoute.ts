@@ -18,7 +18,11 @@ export class StoryRoute extends Route{
       this.router.get(`${this.url}/ta`, this.Controller.testOpenaiApi);
       this.router.post(`${this.url}/startstory`, this.Controller.StartStory);
       this.router.get(`${this.url}/getstorylist_fdb`, authenticateToken,this.Controller.GetStorylistFDB);
-      this.router.post(`${this.url}/llm/genstory`, authenticateToken,this.Controller.LLMGenStory);
+      this.router.post(`${this.url}/llm/genstory`, authenticateToken, (req, res, next) => {
+         req.setTimeout(600000);
+         res.setTimeout(600000);
+         next();
+     },this.Controller.LLMGenStory);
       this.router.post(`${this.url}/llm/genimageprompt`, this.Controller.genimageprompt);
 
       this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);

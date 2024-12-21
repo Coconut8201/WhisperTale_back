@@ -64,7 +64,7 @@ export const GenImg_prompt_En = async (story_slice: string): Promise<string> => 
    (In a locked room) mountain on a hill(On a hill) the top of the hill(On the top of a hill) sea on the beach (On the beach) over the 
    sea (On the sea) beautiful purple sunset at beach (Beautiful sunset at the beach) in the ocean (On the ocean) on the ocean (On board)
    
-   Following the example, you can give a set of prompts that describe "${story_slice}" in detail, not limited to the words I gave you. Note: the prompt cannot exceed 20. Just start giving prompts without using natural language descriptions. `;
+   Following the example, you can give a set of prompts that describe "${story_slice}" in detail, not limited to the words I gave you. Note: the prompt cannot exceed 20. Just start giving prompts without using natural language descriptions. <-00005>`;
    
    // `
    //          I want you to help me make english requests (prompts) for the Stable Diffusion neural network, use English to generate prompt.

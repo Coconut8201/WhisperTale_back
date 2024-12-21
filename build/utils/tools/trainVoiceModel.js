@@ -77,15 +77,7 @@ const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => _
             '--reference_text', voiceText,
             '--format', 'wav',
             '--output', path_1.default.join(saveVoicePath, `${voiceName}`),
-            '--play', 'False'
-            // '-m', 'tools.api_client',
-            // '--url', process.env.fishSpeechApi as string,
-            // '--text', `\"${storyText}。\"`,
-            // '--reference_audio', '/home/b310-21/project/voice/aasc.wav',
-            // '--reference_text', '我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。',
-            // '--format', 'wav',
-            // '--output', path.join(saveVoicePath, `${voiceName}`),
-            // '--play', 'False'
+            '--no-play'
         ];
         const result = yield executeCommand(command, args, {
             shell: true,
