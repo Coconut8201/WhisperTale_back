@@ -71,7 +71,6 @@ const removeEnglish = (str) => {
     return str.replace(/[a-zA-Z]/g, '');
 };
 // 生成故事內容
-// TODO 加入故事封面及標題
 const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let Saved_storyID = yield (0, LLMapi_1.LLMGenStory_1st_2nd)(storyRoleForm, Response, userId);

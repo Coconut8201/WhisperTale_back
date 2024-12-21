@@ -2,6 +2,8 @@ import { Controller } from "../interfaces/Controller";
 import { Request, Response } from "express";
 import path from 'path';
 import fs from 'fs';
+import OpenCC from 'opencc-js';
+const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
 import { whisperCall } from "../utils/tools/fetch";
 import dotenv from 'dotenv';
 dotenv.config();
@@ -10,94 +12,6 @@ export class VoiceController extends Controller{
     public test(Request:Request, Response:Response){
         Response.send(`This is VoiceController`);
     }
-
-    // 上傳多個聲音檔案並生成info.txt 資訊檔案
-    // public UploadVoice = async(req: Request, res: Response) => {
-    //     if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
-    //         return res.status(400).send("未上傳任何檔案");
-    //     }
-
-    //     const userId = (req as any).user?.id;
-    //     if (!userId) {
-    //         return res.status(401).send("未授權的訪問");
-    //     }
-
-    //     const audioName = req.body.audioName;
-    //     const userFolder = path.join(process.env.dev_saveRecording!, `user_${userId}`);
-    //     const audioFolder = path.join(userFolder, audioName);
-    //     const infoFullPath = path.join(audioFolder, `info.txt`);
-        
-    //     try {
-    //         await fs.promises.mkdir(audioFolder, { recursive: true });
-            
-    //         const results = [];
-        
-    //         // 逐個處理檔案，使用 for...of 而不是 map
-    //         for (let i = 0; i < req.files.length; i++) {
-    //             const file = req.files[i];
-    //             try {
-    //                 // 產生新檔名
-    //                 const partNumber = String(i + 1).padStart(1, '0');
-    //                 const newFileName = `${audioName}_${partNumber}.wav`;
-    //                 const fullPath = path.join(audioFolder, newFileName);
-    
-    //                 // 移動並重命名檔案
-    //                 await fs.promises.copyFile(file.path, fullPath);
-                    
-    //                 // 檢查暫存檔是否還存在再刪除
-    //                 if (fs.existsSync(file.path)) {
-    //                     try {
-    //                         await fs.promises.unlink(file.path);
-    //                     } catch (unlinkError) {
-    //                         console.warn(`刪除暫存檔失敗: ${file.path}`, unlinkError);
-    //                     }
-    //                 }
-    
-    //                 results.push({
-    //                     originalName: file.originalname,
-    //                     newName: newFileName,
-    //                     path: fullPath
-    //                 });
-    //             } catch (error) {
-    //                 console.error(`處理檔案 ${file.originalname} 時發生錯誤:`, error);
-    //                 // 繼續處理下一個檔案，而不是中斷整個流程
-    //                 continue;
-    //             }
-    //         }
-    
-    //         // 如果沒有成功處理任何檔案
-    //         if (results.length === 0) {
-    //             return res.status(500).json({
-    //                 code: 500,
-    //                 message: "所有檔案處理失敗"
-    //             });
-    //         }
-            
-    //         // TODO 檔案內容識別
-    //         // for (const fullPath of savedPaths) {
-    //         //     const infoTxtDontknowZh = await whisperCall(fullPath);
-    //         //     if (!infoTxtDontknowZh) {
-    //         //         console.warn(`Whisper 未能識別檔案 ${fullPath} 的內容`);
-    //         //         continue;
-    //         //     }
-
-    //         //     try {
-    //         //         const infoTxtZh: string = converter(infoTxtDontknowZh) + '。';
-    //         //         if (infoTxtZh) {
-    //         //             await fs.promises.appendFile(infoFullPath, infoTxtZh);
-    //         //         }
-    //         //     } catch (convErr) {
-    //         //         console.error(`轉換文字失敗: ${infoTxtDontknowZh}`, convErr);
-    //         //         await fs.promises.appendFile(infoFullPath, infoTxtDontknowZh + '。');
-    //         //     }
-    //         // }
-    
-    //         res.send({code: 200, message: "所有音檔處理完成"});
-    //     } catch(err: any) {
-    //         console.error(`Error in UploadVoice:`, err);
-    //         res.status(500).send({code: 500, message: err.message});
-    //     }
-    // }
 
     public UploadVoice = async(req: Request, res: Response) => {
         try {
@@ -110,6 +24,7 @@ export class VoiceController extends Controller{
             const userFolder = path.join(process.env.dev_saveRecording!, `user_${userId}`);
             const tempFolder = path.join(userFolder, 'temp');
             const audioFolder = path.join(userFolder, audioName);
+            const infoFullPath = path.join(audioFolder, `info.txt`);
 
             await fs.promises.mkdir(audioFolder, { recursive: true });
 
@@ -141,6 +56,25 @@ export class VoiceController extends Controller{
                     code: 500,
                     message: "所有檔案處理失敗"
                 });
+            }
+
+            for (const result of results) {
+                const infoTxtDontknowZh = await whisperCall(result.path);
+                console.log(`infoTxtDontknowZh: ${infoTxtDontknowZh}`)
+                if (!infoTxtDontknowZh) {
+                    console.warn(`Whisper 未能識別檔案 ${result.path} 的內容`);
+                    continue;
+                }
+
+                try {
+                    const infoTxtZh: string = converter(infoTxtDontknowZh) + '。\n';
+                    if (infoTxtZh) {
+                        await fs.promises.appendFile(infoFullPath, infoTxtZh);
+                    }
+                } catch (convErr) {
+                    console.error(`轉換文字失敗: ${infoTxtDontknowZh}`, convErr);
+                    await fs.promises.appendFile(infoFullPath, infoTxtDontknowZh + '。\n');
+                }
             }
 
             res.send({code: 200, message: "所有音檔處理完成", data: results});
