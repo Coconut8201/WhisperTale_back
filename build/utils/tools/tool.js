@@ -90,7 +90,7 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             .filter(item => item !== "");
         yield (0, exports.delayedExecution)();
         console.log(`start GenImagePrompt\n`);
-        yield (0, exports.GenImagePrompt)(generated_story_array || [], Saved_storyID);
+        yield (0, exports.GenImagePrompt)(generated_story_array || [], Saved_storyID, storyRoleForm);
         // Fetch the updated story data to get the generated image prompts
         const updatedStory = yield DataBase_1.DataBase.getStoryById(Saved_storyID);
         const generated_story_image_prompt = updatedStory.image_prompt;
@@ -123,9 +123,9 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
 exports.generateStory = generateStory;
 let generated_imageprompt_array = [];
 // 用故事內容生成故事圖片prompt
-const GenImagePrompt = (generated_story_array, _id) => __awaiter(void 0, void 0, void 0, function* () {
+const GenImagePrompt = (generated_story_array, _id, storyRoleForm) => __awaiter(void 0, void 0, void 0, function* () {
     if (generated_story_array) {
-        generated_imageprompt_array = yield (0, LLM_fetch_images_1.GenImg_prompt_En_array)(generated_story_array);
+        generated_imageprompt_array = yield (0, LLM_fetch_images_1.GenImg_prompt_En_array)(generated_story_array, storyRoleForm);
         console.log(`generated_imageprompt_array.length = ${generated_imageprompt_array.length}`);
         yield DataBase_1.DataBase.Update_StoryImagePromptArray(_id, generated_imageprompt_array);
     }

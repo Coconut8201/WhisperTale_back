@@ -42,7 +42,7 @@ class VoiceController extends Controller_1.Controller {
                 const fullPath = path_1.default.join(filePath, `${audioName}.wav`);
                 yield fs_1.default.promises.rename(file.path, fullPath);
                 const infoTxtDontknowZh = yield (0, fetch_1.whisperCall)(fullPath);
-                const infoTxtZh = converter(infoTxtDontknowZh);
+                const infoTxtZh = converter(infoTxtDontknowZh) + '。';
                 const infoFullPath = path_1.default.join(filePath, 'info.txt');
                 yield fs_1.default.promises.writeFile(infoFullPath, infoTxtZh);
                 console.log(`File ${audioName} saved successfully in ${filePath} and info.txt is done.`);

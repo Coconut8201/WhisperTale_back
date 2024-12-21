@@ -33,7 +33,7 @@ export class VoiceController extends Controller{
             
             await fs.promises.rename(file.path, fullPath);            
             const infoTxtDontknowZh = await whisperCall(fullPath);
-            const infoTxtZh = converter(infoTxtDontknowZh);
+            const infoTxtZh:string = converter(infoTxtDontknowZh) + '。';
             const infoFullPath = path.join(filePath, 'info.txt');
             await fs.promises.writeFile(infoFullPath, infoTxtZh );
 

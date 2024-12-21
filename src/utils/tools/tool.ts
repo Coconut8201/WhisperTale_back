@@ -88,7 +88,7 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         await delayedExecution();
 
         console.log(`start GenImagePrompt\n`);
-        await GenImagePrompt(generated_story_array || [], Saved_storyID);
+        await GenImagePrompt(generated_story_array || [], Saved_storyID, storyRoleForm);
 
         // Fetch the updated story data to get the generated image prompts
         const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);
@@ -123,9 +123,9 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
 let generated_imageprompt_array: string[] = [];
 
 // 用故事內容生成故事圖片prompt
-export const GenImagePrompt = async (generated_story_array: string[], _id: string): Promise<void> => {
+export const GenImagePrompt = async (generated_story_array: string[], _id: string, storyRoleForm: RoleFormInterface): Promise<void> => {
     if (generated_story_array) {
-        generated_imageprompt_array = await GenImg_prompt_En_array(generated_story_array);
+        generated_imageprompt_array = await GenImg_prompt_En_array(generated_story_array, storyRoleForm);
         console.log(`generated_imageprompt_array.length = ${generated_imageprompt_array.length}`);
         await DataBase.Update_StoryImagePromptArray(_id, generated_imageprompt_array);
     }
