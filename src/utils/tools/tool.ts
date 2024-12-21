@@ -87,7 +87,6 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
 
         await delayedExecution();
 
-        //! 解除註解
         console.log(`start GenImagePrompt\n`);
         await GenImagePrompt(generated_story_array || [], Saved_storyID);
 

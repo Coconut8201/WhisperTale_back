@@ -89,7 +89,6 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
             .map(item => item.trim())
             .filter(item => item !== "");
         yield (0, exports.delayedExecution)();
-        //! 解除註解
         console.log(`start GenImagePrompt\n`);
         yield (0, exports.GenImagePrompt)(generated_story_array || [], Saved_storyID);
         // Fetch the updated story data to get the generated image prompts
