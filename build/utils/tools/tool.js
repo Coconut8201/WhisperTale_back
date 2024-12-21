@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenImage = exports.GenImagePrompt = exports.generateStory = exports.isObjectValid = exports.genStoryVoice = exports.CurrentTime = exports.delayedExecution = void 0;
 const fetch_1 = require("../tools/fetch");
+const opencc_js_1 = __importDefault(require("opencc-js"));
 const sdModel_tool_1 = require("./sdModel_tool");
 const LLM_fetch_images_1 = require("./LLM_fetch_images");
 const DataBase_1 = require("../DataBase");
@@ -76,7 +80,10 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
         }
         console.log(`Saved_storyID = ${Saved_storyID}`);
         const story = yield DataBase_1.DataBase.getStoryById(Saved_storyID);
-        let generated_story_array = story.storyTale.split("\n\n")
+        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
+        const converter = opencc_js_1.default.Converter({ from: 'tw', to: 'cn' });
+        const transStory = converter(story.storyTale);
+        let generated_story_array = transStory.split("\n\n") //  這邊開始是簡體中文
             .map(item => removeEnglish(item))
             .map(item => item.replace(/\n/g, ''))
             .map(item => item.trim())
@@ -85,7 +92,6 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
         //! 解除註解
         console.log(`start GenImagePrompt\n`);
         yield (0, exports.GenImagePrompt)(generated_story_array || [], Saved_storyID);
-        // await LLMGen_release(); // 清除Ollama model 占用記憶體
         // Fetch the updated story data to get the generated image prompts
         const updatedStory = yield DataBase_1.DataBase.getStoryById(Saved_storyID);
         const generated_story_image_prompt = updatedStory.image_prompt;

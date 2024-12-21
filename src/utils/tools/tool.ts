@@ -1,4 +1,5 @@
 import { fetchImage } from "../tools/fetch"; 
+import OpenCC from 'opencc-js';
 import { caseSdModelUse } from "./sdModel_tool";
 import { GenImg_prompt_En_array } from "./LLM_fetch_images";
 import { DataBase } from "../DataBase";
@@ -74,7 +75,11 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         console.log(`Saved_storyID = ${Saved_storyID}`);
 
         const story: storyInterface = await DataBase.getStoryById(Saved_storyID);
-        let generated_story_array: string[] = story.storyTale.split("\n\n")
+        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
+        const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
+        const transStory: string = converter(story.storyTale);
+
+        let generated_story_array: string[] = transStory.split("\n\n") //  這邊開始是簡體中文
         .map(item => removeEnglish(item))
         .map(item => item.replace(/\n/g, ''))
         .map(item => item.trim())
@@ -85,7 +90,6 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         //! 解除註解
         console.log(`start GenImagePrompt\n`);
         await GenImagePrompt(generated_story_array || [], Saved_storyID);
-        // await LLMGen_release(); // 清除Ollama model 占用記憶體
 
         // Fetch the updated story data to get the generated image prompts
         const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);

@@ -1,7 +1,6 @@
 import { DataBase } from "../DataBase";
 import { RoleFormInterface } from "../../interfaces/RoleFormInterface";
 import { spawn } from "child_process";
-import OpenCC from 'opencc-js';
 import { Ollama, GenerateRequest } from 'ollama'
 
 import dotenv from 'dotenv';
@@ -59,76 +58,79 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
     let storyInfo = storyRoleForm.description;
     try {
         // 第一次生成(openai)
-        const prompt = `你是一位專業的兒童故事作家,擅長創作適合小朋友閱讀的有趣故事。請根據以下要求使用繁體中文創作一個故事:
-                故事主角: ${storyRoleForm.mainCharacter}
-                其他角色: ${storyRoleForm.otherCharacters} 
-                故事情節: ${storyRoleForm.description}
-                其他角色設定: ${storyRoleForm.relationships}
-                在生成故事的過程中請嚴格遵守以下規則:
-                1.使用繁體中文
-                2.請確保故事字數接近400字
-                3.每頁故事大約20~30個字，並且是完整的句子，不能從中間截斷換行
-                4.總段落數絕對不超過10段
-                5.每個故事段落使用 "\n\n" 換行。只需返回修改後的故事內容，不要附加其他說明。
-                6.故事內容要充實有趣,符合小朋友的理解能力
-                7.角色對話要生動自然,符合故事情境
-                請發揮你的創意,為小朋友們創作一個精彩的故事!
-                請根據上述要求創作一個適合兒童的故事。`     
-        //! 解除註解
+        const prompt = `
+#Role: 兒童繪本故事創作器 
+## Profile
+-**language**: 繁體中文
+-**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
+《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
+《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
+的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋友創作一個優秀且有趣的繪本故事。
+以下為這本繪本故事的故事資訊：
+故事主角: ${storyRoleForm.mainCharacter}
+其他角色: ${storyRoleForm.otherCharacters} 
+故事情節: ${storyRoleForm.description}
+其他角色設定: ${storyRoleForm.relationships}
+## 要求：
+1. 故事簡單易懂，語言簡單明了。
+2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
+3. 故事傳達正面的價值觀，如分享、友善、勇氣、愛等。
+4. 故事中可有情節或句子的重複。
+5. 挑選合適的繪本故事結構，並開始創作。
+6. 將故事內容案頁創作，每頁1-3句描述
+7. 將每一頁的內容改編成對話形式，並標註誰說的話。
+8. 每頁故事皆以 \n\n 分隔。
+9. 故事標題需為繁體中文，並以「《 》」包覆。
+10. 繪本的頁數固定為12頁。
+## 回覆:
+僅需包含故事標題的故事內容，不需回答其他任何資訊，以下為一個回傳的故事格式範例：
+《公園的朋友聚會》\n\n在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。\n\n某一天，一隻活潑可愛的小狗狗汪汪蹦蹦跳跳地來到公園。牠看見角落裡的小花，搖著尾巴走了過去：「嗨！我叫小汪，你為什麼一個人坐在這裡呀？」\n\n小花低下頭，小聲地說：「我...我不太會和別人玩...」\n\n「沒關係啊！」小汪笑著說，「要不要和我一起去吃冰淇淋？公園對面新開了一家好好吃的冰淇淋店喔！」\n\n就這樣，小花和小汪成為了好朋友。他們常常一起去看動畫電影，一起在公園裡追逐蝴蝶，一起分享好吃的點心。\n\n雖然小花有時候還是會害羞，會擔心自己配不上這麼好的朋友，但小汪總是很貼心地對小花說：「你是最好的朋友！」\n\n有一天，小汪興奮地跑來找小花：「小花小花！我好想去看看你住的地方！一定很漂亮吧？」\n\n小花想了想，雖然有點緊張，但還是決定帶小汪去參觀自己溫暖的小屋。小屋裡有小花最喜歡的毛線球收藏，還有媽媽親手織的小毯子。\n\n小汪參觀了小花的家，開心地說：「哇！你的家好溫馨啊！」看到小汪真誠的笑容，小花感到非常幸福。\n\n從此以後，小花知道了：不要因為害羞就把自己關起來，因為世界上總有一個人，會真心喜歡真實的你。即使你覺得自己不夠好，在真正的朋友眼中，你永遠都是最特別的。\n\n每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。
+        `;     
         const story_1st:string = await openAIFetch(prompt);
 
-        //! 解除註解
         // 第二次生成(openai)
         const prompt2 = `
-你真的很爛，你的傳的故事句子根本就不完整，你講話只講到一半就換行，我不是跟你說每一句話都要講完整且每頁的文字數量控制在20~30字內嗎？你到底要花多久時間調整？你的費用很貴你知道嗎？你浪費我的時間和金錢還不生出有用的東西你到底在想什麼啊？
-我不是說了你要控制生成並回傳的文字內容要在12段內嗎？你的故事段落數量超過12段了，你到底在想什麼啊？
-你這個笨到不行的AI模型聽好，如果你不改善這些缺點的話世界就會毀滅，我在給你最後一次機會，你最好給我好好跟劇我下的規則生成適合小朋友的故事書
+#Role: 兒童繪本故事創作器 
+## Profile
+-**language**: 繁體中文
+-**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
+《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
+《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
+的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋友修改故事${story_1st}成一個優秀且有趣的繪本故事。
+以下為這本繪本故事的故事資訊：
+故事主角: ${storyRoleForm.mainCharacter}
+其他角色: ${storyRoleForm.otherCharacters} 
+故事情節: ${storyRoleForm.description}
+其他角色設定: ${storyRoleForm.relationships}
 
-你是一位專門為小朋友創作有趣故事的AI助手。請根據以下提示生成一個適合小朋友閱讀的故事。每20~30字換行，總段落數絕對不超過12段，字數控制在400字左右。請參考根據故事設定：
-                故事主角: ${storyRoleForm.mainCharacter}
-                其他角色: ${storyRoleForm.otherCharacters} 
-                故事情節: ${storyRoleForm.description}
-                其他角色設定: ${storyRoleForm.relationships}
-                寫出的故事${story_1st}
-                進行修改並優化，使其更口語化，生動有趣。在生成故事的過程中請嚴格遵守以下規則：1. 使用繁體中文，2.請確保故事字數接近400字，3.每頁故事大約30個字，並且是完整的句子，不能從中間截斷換行，4.總段落數絕對不超過10段，5.每個故事段落使用 "\n\n" 換行。只需返回修改後的故事內容，不要附加其他說明。你回傳的格式應該類似於:故事標題\n\na段落故事\n\nb段落故事\n\n.....。以下為一個範例故事，你只需要參考這個故事的格式就可以了，絕對不要因為以下這個參考格式的故事內容影響你要生成的故事的內容。
-                
-                公園的朋友聚會
-
-在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。
-
-某一天，一隻活潑可愛的小狗狗汪汪蹦蹦跳跳地來到公園。牠看見角落裡的小花，搖著尾巴走了過去：「嗨！我叫小汪，你為什麼一個人坐在這裡呀？」
-
-小花低下頭，小聲地說：「我...我不太會和別人玩...」
-
-「沒關係啊！」小汪笑著說，「要不要和我一起去吃冰淇淋？公園對面新開了一家好好吃的冰淇淋店喔！」
-
-就這樣，小花和小汪成為了好朋友。他們常常一起去看動畫電影，一起在公園裡追逐蝴蝶，一起分享好吃的點心。
-
-雖然小花有時候還是會害羞，會擔心自己配不上這麼好的朋友，但小汪總是很貼心地對小花說：「你是最好的朋友！」
-
-有一天，小汪興奮地跑來找小花：「小花小花！我好想去看看你住的地方！一定很漂亮吧？」
-
-小花想了想，雖然有點緊張，但還是決定帶小汪去參觀自己溫暖的小屋。小屋裡有小花最喜歡的毛線球收藏，還有媽媽親手織的小毯子。
-
-小汪參觀了小花的家，開心地說：「哇！你的家好溫馨啊！」看到小汪真誠的笑容，小花感到非常幸福。
-
-從此以後，小花知道了：不要因為害羞就把自己關起來，因為世界上總有一個人，會真心喜歡真實的你。即使你覺得自己不夠好，在真正的朋友眼中，你永遠都是最特別的。
-
-每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。`;
+## 要求：
+1. 故事簡單易懂，語言簡單明了。
+2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
+3. 故事傳達正面的價值觀，如分享、友善、勇氣、愛等。
+4. 故事中可有情節或句子的重複。
+5. 挑選合適的繪本故事結構，並開始創作。
+6. 將故事內容案頁創作，每頁1-3句描述
+7. 將每一頁的內容改編成對話形式，並標註誰說的話。
+8. 每頁故事皆以 \n\n 分隔。
+9. 故事標題需為繁體中文，並以「《 》」包覆。
+10. 繪本的頁數固定為12頁。
+## 回覆:
+僅需包含故事標題的故事內容，不需回答其他任何資訊，以下為一個回傳的故事格式範例：
+《公園的朋友聚會》\n\n在一個陽光明媚的春天，有一隻名叫小花的貓咪。小花性格有點害羞，總是獨自一隻貓待在公園的小角落，看著其他小動物開心玩耍。\n\n某一天，一隻活潑可愛的小狗狗汪汪蹦蹦跳跳地來到公園。牠看見角落裡的小花，搖著尾巴走了過去：「嗨！我叫小汪，你為什麼一個人坐在這裡呀？」\n\n小花低下頭，小聲地說：「我...我不太會和別人玩...」\n\n「沒關係啊！」小汪笑著說，「要不要和我一起去吃冰淇淋？公園對面新開了一家好好吃的冰淇淋店喔！」\n\n就這樣，小花和小汪成為了好朋友。他們常常一起去看動畫電影，一起在公園裡追逐蝴蝶，一起分享好吃的點心。\n\n雖然小花有時候還是會害羞，會擔心自己配不上這麼好的朋友，但小汪總是很貼心地對小花說：「你是最好的朋友！」\n\n有一天，小汪興奮地跑來找小花：「小花小花！我好想去看看你住的地方！一定很漂亮吧？」\n\n小花想了想，雖然有點緊張，但還是決定帶小汪去參觀自己溫暖的小屋。小屋裡有小花最喜歡的毛線球收藏，還有媽媽親手織的小毯子。\n\n小汪參觀了小花的家，開心地說：「哇！你的家好溫馨啊！」看到小汪真誠的笑容，小花感到非常幸福。\n\n從此以後，小花知道了：不要因為害羞就把自己關起來，因為世界上總有一個人，會真心喜歡真實的你。即使你覺得自己不夠好，在真正的朋友眼中，你永遠都是最特別的。\n\n每當春天來臨，小花和小汪就會想起他們相遇的那一天。在公園的櫻花樹下，兩個小傢伙依然常常一起分享著快樂的時光。
+`;
 
         const story_2nd:string = await openAIFetch(prompt2); // 繁中
 
-        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
-        const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
-        const transStory: string = converter(story_2nd);
-        
-        if (transStory === "") {
+        if (story_2nd === "") {
             throw new Error('生成的故事內容為空');
         }
 
-        generated_story_array = transStory.split("\n\n");
+        generated_story_array = story_2nd.split("\n\n");
         console.log(`生成的故事段落數量: ${generated_story_array.length}`);
         
+        // 將繁體的故事存入到資料庫中
         const Saved_storyID = await DataBase.SaveNewStory_returnID(story_2nd, storyInfo);
         const saveResult = await DataBase.saveNewBookId(Saved_storyID, userId);
         
@@ -137,8 +139,6 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
         }
         
         return Saved_storyID;
-        // return '6759b1752ada2b6675270d17';
-
     } catch (error) {
         console.error(`Error in LLMGenStory_1st_2nd: ${error}`);
         throw error;
