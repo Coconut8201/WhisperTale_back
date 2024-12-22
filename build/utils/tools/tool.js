@@ -99,10 +99,10 @@ const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 
         console.log(`start GenImage`);
         yield (0, exports.GenImage)(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
         console.log(`start getVoices`);
-        const joinedStoryTale = generated_story_array.reduce((acc, curr, i) => {
+        const joinedStoryTale = generated_story_array.slice(1).reduce((acc, curr, i) => {
             if (i % 2 === 0) {
-                if (i + 1 < generated_story_array.length) {
-                    acc.push(generated_story_array[i] + generated_story_array[i + 1]);
+                if (i + 1 < generated_story_array.length - 1) {
+                    acc.push(generated_story_array[i + 1] + generated_story_array[i + 2]);
                 }
                 else {
                     acc.push(curr);

@@ -52,7 +52,7 @@ const LLMGenChat = (storyInfo) => __awaiter(void 0, void 0, void 0, function* ()
         else {
             console.error(`LLMGenChat fail: ${error}`);
         }
-        throw error; // 重新拋出錯誤，讓調用者處理
+        throw error;
     }
 });
 exports.LLMGenChat = LLMGenChat;
@@ -67,21 +67,22 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId) => __awaiter(void 
     try {
         // 第一次生成(openai)
         const prompt = `
-#Role: 兒童繪本故事創作器 
+你很奇怪欸，我就跟你說繪本只要6頁你每次都生成超過6頁，你到底有沒有在聽我說話？
+#Role: 兒童繪本故事創作器
 ## Profile
 -**language**: 繁體中文
 -**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋友創作一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友創作一個優秀且有趣的繪本故事。
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
 故事情節: ${storyRoleForm.description}
 其他角色設定: ${storyRoleForm.relationships}
 ## 要求：
-0. 繪本的頁數固定為12頁。
+0. 繪本的頁數固定為6頁。
 1. 故事簡單易懂，語言簡單明了。
 2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
 3. 故事傳達正面的價值觀，如分享、友善、勇氣、愛等。
@@ -106,6 +107,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋
         const story_1st = yield (0, openai_fetch_1.openAIFetch)(prompt);
         // 第二次生成(openai)
         const prompt2 = `
+你很奇怪欸，我就跟你說繪本只要6頁你每次都生成超過12頁，你到底有沒有在聽我說話？
 #Role: 兒童繪本故事創作器 
 ## Profile
 -**language**: 繁體中文
@@ -113,7 +115,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋友修改故事${story_1st}成一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友修改故事${story_1st}成一個優秀且有趣的繪本故事。
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
@@ -122,7 +124,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-6歲的小朋
 
 ## 要求：
 此為重新檢查這篇故事是否符合繪本故事的標準，並進行修改，請嚴格遵守以下的規定並修改故事使其符合以下規定。
-0. 繪本的頁數固定為12頁。
+0. 繪本的頁數固定為6頁。
 1. 故事簡單易懂，語言簡單明了。
 2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
 3. 故事傳達正面的價值觀，如分享、友善、勇氣、愛等。

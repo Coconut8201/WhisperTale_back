@@ -100,10 +100,10 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
 
         console.log(`start getVoices`);
-        const joinedStoryTale: string[] = generated_story_array.reduce((acc: string[], curr: string, i: number) => {
+        const joinedStoryTale: string[] = generated_story_array.slice(1).reduce((acc: string[], curr: string, i: number) => {
             if (i % 2 === 0) {
-                if (i + 1 < generated_story_array.length) {
-                    acc.push(generated_story_array[i] + generated_story_array[i + 1]);
+                if (i + 1 < generated_story_array.length - 1) {
+                    acc.push(generated_story_array[i + 1] + generated_story_array[i + 2]);
                 } else {
                     acc.push(curr);
                 }

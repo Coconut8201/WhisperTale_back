@@ -72,7 +72,6 @@ export class UserController extends Controller{
     public async Logout(req: Request, res: Response) {
         try {
             console.log(`here`)
-            // 使用多種方式清除 cookie
             const cookieOptions = {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',

@@ -83,7 +83,6 @@ class UserController extends Controller_1.Controller {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log(`here`);
-                // 使用多種方式清除 cookie
                 const cookieOptions = {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
