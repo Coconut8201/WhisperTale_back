@@ -14,6 +14,7 @@ export class VoiceController extends Controller{
     }
 
     public UploadVoice = async(req: Request, res: Response) => {
+        console.log('here')
         try {
             const userId = (req as any).user?.id;
             if (!userId) {
@@ -22,7 +23,7 @@ export class VoiceController extends Controller{
 
             const audioName = req.body.audioName;
             const userFolder = path.join(process.env.dev_saveRecording!, `user_${userId}`);
-            const tempFolder = path.join(userFolder, 'temp');
+            const tempFolder = path.join(process.env.dev_saveRecording!, 'temp');
             const audioFolder = path.join(userFolder, audioName);
             const infoFullPath = path.join(audioFolder, `info.txt`);
 

@@ -26,6 +26,7 @@ class VoiceController extends Controller_1.Controller {
         super(...arguments);
         this.UploadVoice = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
+            console.log('here');
             try {
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
                 if (!userId) {
@@ -33,7 +34,7 @@ class VoiceController extends Controller_1.Controller {
                 }
                 const audioName = req.body.audioName;
                 const userFolder = path_1.default.join(process.env.dev_saveRecording, `user_${userId}`);
-                const tempFolder = path_1.default.join(userFolder, 'temp');
+                const tempFolder = path_1.default.join(process.env.dev_saveRecording, 'temp');
                 const audioFolder = path_1.default.join(userFolder, audioName);
                 const infoFullPath = path_1.default.join(audioFolder, `info.txt`);
                 yield fs_1.default.promises.mkdir(audioFolder, { recursive: true });

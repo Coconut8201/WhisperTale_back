@@ -7,7 +7,7 @@ dotenv.config();
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
         const userId = (req as any).user?.id;
-        const targetDir = path.join(process.env.dev_saveRecording!, `user_${userId}`,'temp');  
+        const targetDir = path.join(process.env.dev_saveRecording!, 'temp');
         try {
             await fs.promises.mkdir(targetDir, { recursive: true });
             cb(null, targetDir);
