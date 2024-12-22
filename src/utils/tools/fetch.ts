@@ -71,6 +71,34 @@ export const fetchImage = async (payload:Object) => {
     }
 };
 
+export const callLocalWhisper = async (filePath: string): Promise<string> => {
+    try {
+        const formData = new FormData();
+        
+        formData.append('model', 'openai/whisper-large-v3');
+        
+        const fileBuffer = await fs.promises.readFile(filePath);
+        const fileName = path.basename(filePath);
+        const blob = new Blob([fileBuffer], { type: 'audio/wav' });
+        formData.append('file', blob, fileName);
+
+        const response = await fetch(process.env.localWhisperAPI!, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result.text || '';
+    } catch (error) {
+        console.error(`callLocalWhisper 失敗：`, error);
+        throw error;
+    }
+};
+
 // // 拿語音內容
 // export const getVoices = async (Saved_storyID: string, storyTale: string): Promise<{ audioFileName: string, audioBuffer: ArrayBuffer, error?: string }> => {
 //     const url = `${process.env.GPT_SOVITS_VOICE_API}/tts`;
@@ -138,7 +166,7 @@ export const fetchImage = async (payload:Object) => {
 //     const latestSovitsFile = findLatestFile(sovitsWeightsDir, modelName);
     
 //     if (!latestSovitsFile) {
-//         throw new Error('找不到匹配的模型檔案');
+//         throw new Error('找不到匹的模型檔案');
 //     }
     
 //     console.log(`已找到以下兩個模型：${latestGptFile}, ${path.join(sovitsWeightsDir, latestSovitsFile)}`);

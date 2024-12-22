@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchImage = exports.whisperCall = void 0;
+exports.callLocalWhisper = exports.fetchImage = exports.whisperCall = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 // const findLatestFile = (directory: string, prefix: string): string | null => {
 //     try {
 //         const allFiles = fs.readdirSync(directory);
@@ -75,6 +76,30 @@ const fetchImage = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.fetchImage = fetchImage;
+const callLocalWhisper = (filePath) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const formData = new FormData();
+        formData.append('model', 'openai/whisper-large-v3');
+        const fileBuffer = yield fs_1.default.promises.readFile(filePath);
+        const fileName = path_1.default.basename(filePath);
+        const blob = new Blob([fileBuffer], { type: 'audio/wav' });
+        formData.append('file', blob, fileName);
+        const response = yield fetch(process.env.localWhisperAPI, {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = yield response.json();
+        return result.text || '';
+    }
+    catch (error) {
+        console.error(`callLocalWhisper 失敗：`, error);
+        throw error;
+    }
+});
+exports.callLocalWhisper = callLocalWhisper;
 // // 拿語音內容
 // export const getVoices = async (Saved_storyID: string, storyTale: string): Promise<{ audioFileName: string, audioBuffer: ArrayBuffer, error?: string }> => {
 //     const url = `${process.env.GPT_SOVITS_VOICE_API}/tts`;
@@ -132,7 +157,7 @@ exports.fetchImage = fetchImage;
 //     const latestGptFile = `${gptWeightsDir}/${modelName}-e15.ckpt`;
 //     const latestSovitsFile = findLatestFile(sovitsWeightsDir, modelName);
 //     if (!latestSovitsFile) {
-//         throw new Error('找不到匹配的模型檔案');
+//         throw new Error('找不到匹的模型檔案');
 //     }
 //     console.log(`已找到以下兩個模型：${latestGptFile}, ${path.join(sovitsWeightsDir, latestSovitsFile)}`);
 //     const payload = {

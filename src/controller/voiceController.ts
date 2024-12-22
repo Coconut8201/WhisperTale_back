@@ -4,84 +4,103 @@ import path from 'path';
 import fs from 'fs';
 import OpenCC from 'opencc-js';
 const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
-import { whisperCall } from "../utils/tools/fetch";
+import { callLocalWhisper } from "../utils/tools/fetch";
 import dotenv from 'dotenv';
 dotenv.config();
+import ffmpeg from 'fluent-ffmpeg';
 
 export class VoiceController extends Controller{
     public test(Request:Request, Response:Response){
         Response.send(`This is VoiceController`);
     }
 
+    private async processAudioSegment(filePath: string, infoFullPath: string) {
+        const infoText = await callLocalWhisper(filePath);
+        if (!infoText) {
+            console.warn(`Whisper 未能識別檔案 ${filePath} 的內容`);
+            return;
+        }
+
+        try {
+            const convertedText = converter(infoText) + '。\n';
+            await fs.promises.appendFile(infoFullPath, convertedText);
+        } catch (error) {
+            console.error(`轉換文字失敗: ${infoText}`, error);
+            await fs.promises.appendFile(infoFullPath, infoText + '。\n');
+        }
+    }
+
+    private async segmentAudio(sourceAudioPath: string, tempFolder: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            ffmpeg()
+                .input(sourceAudioPath)
+                .outputOptions(['-f segment', '-segment_time 8', '-reset_timestamps 1'])
+                .output(path.join(tempFolder, 'segment_%03d.wav'))
+                .on('end', (stdout: string | null, stderr: string | null) => resolve())
+                .on('error', reject)
+                .run();
+        });
+    }
+
     public UploadVoice = async(req: Request, res: Response) => {
-        console.log('here')
         try {
             const userId = (req as any).user?.id;
             if (!userId) {
-                return res.status(401).send("未授權的訪問");
+                return res.status(401).json({ code: 401, message: "未授權的訪問" });
             }
 
-            const audioName = req.body.audioName;
+            const { audioName } = req.body;
+            const sourceAudioPath = path.join(process.env.dev_saveRecording!, 'temp', `${audioName}.wav`);
+
+            if (!fs.existsSync(sourceAudioPath)) {
+                return res.status(400).json({ code: 400, message: `音訊檔案不存在: ${sourceAudioPath}` });
+            }
+
             const userFolder = path.join(process.env.dev_saveRecording!, `user_${userId}`);
             const tempFolder = path.join(process.env.dev_saveRecording!, 'temp');
             const audioFolder = path.join(userFolder, audioName);
             const infoFullPath = path.join(audioFolder, `info.txt`);
 
-            await fs.promises.mkdir(audioFolder, { recursive: true });
+            await Promise.all([
+                fs.promises.mkdir(audioFolder, { recursive: true }),
+                fs.promises.mkdir(tempFolder, { recursive: true })
+            ]);
+
+            await this.segmentAudio(sourceAudioPath, tempFolder);
 
             const files = await fs.promises.readdir(tempFolder);
-            const results = [];
+            const sortedFiles = files.sort((a, b) => {
+                const numA = parseInt(a.match(/segment_(\d+)\.wav/)?.[1] || '0');
+                const numB = parseInt(b.match(/segment_(\d+)\.wav/)?.[1] || '0');
+                return numA - numB;
+            });
 
-            for (let i = 0; i < files.length; i++) {
-                const fileName = files[i];
+            const results = [];
+            for (const fileName of sortedFiles) {
                 const sourcePath = path.join(tempFolder, fileName);
-                const partNumber = String(i + 1).padStart(1, '0');
-                const newFileName = `${audioName}_${partNumber}.wav`;
+                const fileIndex = parseInt(fileName.match(/segment_(\d+)\.wav/)?.[1] || '0');
+                const newFileName = `${audioName}_${fileIndex}.wav`;
                 const targetPath = path.join(audioFolder, newFileName);
 
                 try {
                     await fs.promises.rename(sourcePath, targetPath);
-                    results.push({
-                        originalName: fileName,
-                        newName: newFileName,
-                        path: targetPath
-                    });
+                    await this.processAudioSegment(targetPath, infoFullPath);
+                    results.push({ originalName: fileName, newName: newFileName, path: targetPath });
                 } catch (error) {
-                    console.error(`移動檔案 ${fileName} 時發生錯誤:`, error);
-                    continue;
+                    console.error(`處理檔案 ${fileName} 時發生錯誤:`, error);
+                    results.push(null);
                 }
             }
 
-            if (results.length === 0) {
-                return res.status(500).json({
-                    code: 500,
-                    message: "所有檔案處理失敗"
-                });
+            const successfulResults = results.filter(Boolean);
+            if (successfulResults.length === 0) {
+                return res.status(500).json({ code: 500, message: "所有檔案處理失敗" });
             }
 
-            for (const result of results) {
-                const infoTxtDontknowZh = await whisperCall(result.path);
-                console.log(`infoTxtDontknowZh: ${infoTxtDontknowZh}`)
-                if (!infoTxtDontknowZh) {
-                    console.warn(`Whisper 未能識別檔案 ${result.path} 的內容`);
-                    continue;
-                }
-
-                try {
-                    const infoTxtZh: string = converter(infoTxtDontknowZh) + '。\n';
-                    if (infoTxtZh) {
-                        await fs.promises.appendFile(infoFullPath, infoTxtZh);
-                    }
-                } catch (convErr) {
-                    console.error(`轉換文字失敗: ${infoTxtDontknowZh}`, convErr);
-                    await fs.promises.appendFile(infoFullPath, infoTxtDontknowZh + '。\n');
-                }
-            }
-
-            res.send({code: 200, message: "所有音檔處理完成", data: results});
+            res.json({ code: 200, message: "所有音檔處理完成", data: successfulResults });
         } catch(err: any) {
             console.error(`Error in UploadVoice:`, err);
-            res.status(500).send({code: 500, message: err.message});
+            res.status(500).json({ code: 500, message: err.message });
         }
     }
 
@@ -90,7 +109,7 @@ export class VoiceController extends Controller{
             const referPathDir = req.body.referPathDir;
             const audioName = req.body.audioName;
             const fathPath = path.join(referPathDir, audioName);
-            const result = await whisperCall(fathPath);
+            const result = await callLocalWhisper(fathPath);
             res.send({code: 200, message: result});
         } catch (error: any) {
             console.error('Whisper 處理失敗:', error);
