@@ -49,19 +49,27 @@ const executeCommand = async (command: string, args: string[], options: any): Pr
 };
 
 // 用fish speech 生成聲音
-export const genFishVoice = async ( userId: string, storyId: string, storyText: string, voiceName: string , userVoiceName: string): Promise<boolean> => {
+export const genFishVoice = async (userId: string, storyId: string, storyText: string, voiceName: string, userVoiceName: string): Promise<boolean> => {
     try {
         const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
         const userVoicePath = `${process.env.dev_saveRecording}/user_${userId}/${userVoiceName}`;
+        
+        const files = await fs.readdir(userVoicePath);
+        const wavFiles = files.filter(file => file.endsWith('.wav'));
+        
         const voiceText = await fs.readFile(`${userVoicePath}/info.txt`, 'utf-8');
+        const textSegments = voiceText.split('\n\n').filter(text => text.trim()).slice(1);
+
         await ensureDir(saveVoicePath);
+        const referenceAudios = wavFiles.map(file => `${userVoicePath}/${file}`).slice(1);
+        
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi as string,
             '--text', `\"${storyText}。\"`,
-            '--reference_audio', `${userVoicePath}/${userVoiceName}.wav`,
-            '--reference_text', voiceText,
+            '--reference_audio', ...referenceAudios,
+            '--reference_text', ...textSegments,
             '--format', 'wav',
             '--output', path.join(saveVoicePath, `${voiceName}`),
             '--no-play'
@@ -72,7 +80,6 @@ export const genFishVoice = async ( userId: string, storyId: string, storyText: 
             cwd: process.env.fishSpeechDir
         });
 
-        // 檢查結果是否包含錯誤訊息
         return !result.includes('Error:');
     } catch (error) {
         console.error('生成語音時發生錯誤:', error);

@@ -22,7 +22,7 @@ export class VoiceController extends Controller{
         }
 
         try {
-            const convertedText = converter(infoText) + '。\n';
+            const convertedText = converter(infoText) + '。\n\n';
             await fs.promises.appendFile(infoFullPath, convertedText);
         } catch (error) {
             console.error(`轉換文字失敗: ${infoText}`, error);

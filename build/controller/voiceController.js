@@ -112,7 +112,7 @@ class VoiceController extends Controller_1.Controller {
                 return;
             }
             try {
-                const convertedText = converter(infoText) + '。\n';
+                const convertedText = converter(infoText) + '。\n\n';
                 yield fs_1.default.promises.appendFile(infoFullPath, convertedText);
             }
             catch (error) {

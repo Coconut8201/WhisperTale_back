@@ -66,15 +66,19 @@ const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => _
     try {
         const saveVoicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}`;
         const userVoicePath = `${process.env.dev_saveRecording}/user_${userId}/${userVoiceName}`;
+        const files = yield promises_1.default.readdir(userVoicePath);
+        const wavFiles = files.filter(file => file.endsWith('.wav'));
         const voiceText = yield promises_1.default.readFile(`${userVoicePath}/info.txt`, 'utf-8');
+        const textSegments = voiceText.split('\n\n').filter(text => text.trim()).slice(1);
         yield ensureDir(saveVoicePath);
+        const referenceAudios = wavFiles.map(file => `${userVoicePath}/${file}`).slice(1);
         const command = 'python';
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi,
             '--text', `\"${storyText}。\"`,
-            '--reference_audio', `${userVoicePath}/${userVoiceName}.wav`,
-            '--reference_text', voiceText,
+            '--reference_audio', ...referenceAudios,
+            '--reference_text', ...textSegments,
             '--format', 'wav',
             '--output', path_1.default.join(saveVoicePath, `${voiceName}`),
             '--no-play'
@@ -83,7 +87,6 @@ const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => _
             shell: true,
             cwd: process.env.fishSpeechDir
         });
-        // 檢查結果是否包含錯誤訊息
         return !result.includes('Error:');
     }
     catch (error) {
