@@ -187,5 +187,26 @@ class StoryController extends Controller_1.Controller {
             }
         });
     }
+    makezhuyin(Request, Response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            4;
+            let { text } = Request.body;
+            try {
+                let result = yield fetch(`${process.env.makeZhuyinAPI}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                const data = yield result.json();
+                Response.json(data);
+            }
+            catch (error) {
+                console.error('Error in makezhuyin:', error);
+                Response.status(500).json({ error: '轉換注音失敗' });
+            }
+        });
+    }
 }
 exports.StoryController = StoryController;

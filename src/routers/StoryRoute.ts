@@ -24,6 +24,7 @@ export class StoryRoute extends Route{
          next();
      },this.Controller.LLMGenStory);
 
+      this.router.post(`${this.url}/makezhuyin`, this.Controller.makezhuyin);
       this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
       this.router.get(`${this.url}/images/sdmodellist`, this.Controller.GetSDModelList);
       this.router.post(`${this.url}/image/re_gen_image`, this.Controller.ReGenImage);

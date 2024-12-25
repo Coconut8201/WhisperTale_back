@@ -23,6 +23,7 @@ class StoryRoute extends Route_1.Route {
             res.setTimeout(600000);
             next();
         }, this.Controller.LLMGenStory);
+        this.router.post(`${this.url}/makezhuyin`, this.Controller.makezhuyin);
         this.router.post(`${this.url}/image/sdoption`, this.Controller.sdOption);
         this.router.get(`${this.url}/images/sdmodellist`, this.Controller.GetSDModelList);
         this.router.post(`${this.url}/image/re_gen_image`, this.Controller.ReGenImage);

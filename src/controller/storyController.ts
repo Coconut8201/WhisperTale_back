@@ -178,4 +178,24 @@ export class StoryController extends Controller {
       // Response.status(500).send('Internal Server Error');
     }
   }
+
+  public async makezhuyin(Request: Request, Response: Response) {4 
+    let { text } = Request.body;
+    
+    try {
+        let result = await fetch(`${process.env.makeZhuyinAPI!}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: text })
+        });
+        
+        const data = await result.json();
+        Response.json(data);
+    } catch (error) {
+        console.error('Error in makezhuyin:', error);
+        Response.status(500).json({ error: '轉換注音失敗' });
+    }
+}
 }
