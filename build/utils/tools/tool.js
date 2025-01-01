@@ -140,13 +140,14 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
             "prompt": generated_story_image_prompt[i] + ", " + settingPlayload.exclusive_prompt,
             "seed": -1,
             "cfg_scale": 7,
-            "steps": 30,
+            "steps": 25,
             "enable_hr": false,
             "denoising_strength": 0.75,
             "restore_faces": false,
-            "negative_prompt": settingPlayload.negative_prompt + ", " + "low res, text, logo, banner, extra digits, jpeg artifacts, signature,  error, sketch ,duplicate, monochrome, horror, geometry, mutation, disgusting, nsfw, nude, censored, lowres, bad anatomy, bad hands,  missing fingers, fewer digits, cropped, worst quality, low quality, normal quality, signature, watermark, username, blurry, artist name, bad quality, poor quality, zombie, ugly, out of frame",
+            "negative_prompt": settingPlayload.negative_prompt + ", " + "low res, text, logo, banner, extra digits, jpeg artifacts, signature,  error, sketch ,duplicate, monochrome, horror, geometry, mutation, disgusting, nsfw, nude, censored, lowres, bad anatomy, bad hands,  missing fingers, fewer digits, cropped, worst quality, low quality, normal quality, signature, watermark, username, blurry, artist name, bad quality, poor quality, zombie, ugly, out of frame, hands",
             "override_settings": {
-                "sd_vae": "anythingModelVAEV40_v10.pt"
+                "sd_vae": settingPlayload.sd_vae ? settingPlayload.sd_vae : "",
+                "sampler_index": settingPlayload.sampler_index ? settingPlayload.sampler_index : ""
             }
         };
         console.log(`GenImage 第${i}次生成`);

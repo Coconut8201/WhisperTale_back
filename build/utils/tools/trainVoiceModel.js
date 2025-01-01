@@ -76,13 +76,24 @@ const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => _
         const args = [
             '-m', 'tools.api_client',
             '--url', process.env.fishSpeechApi,
-            '--text', `\"${storyText}。\"`,
-            '--reference_audio', ...referenceAudios,
-            '--reference_text', ...textSegments,
-            '--format', 'wav',
-            '--output', path_1.default.join(saveVoicePath, `${voiceName}`),
-            '--no-play'
+            '--text', storyText + '。',
         ];
+        // 加入參考音檔和文字對
+        referenceAudios.forEach((audio, index) => {
+            args.push('--reference_audio', audio);
+            args.push('--reference_text', textSegments[index]);
+        });
+        args.push('--format', 'wav', '--output', path_1.default.join(saveVoicePath, `${voiceName}`), '--no-play');
+        /**
+         * python -m tools.api_client \
+--url http://163.13.202.128:8080/v1/tts \
+--text "中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都不敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都不敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。中華隊在這屆世界12強棒球賽中，3度與日本隊交手，前2戰都不敵日本，但在冠軍戰中，5局上靠著林家正的陽春砲、陳傑憲3分全壘打，一口氣灌進4分，且整場TEAM TAIWAN皆拿出絕佳表現，最後成功以4比0完封日本，讓地主隊日本銀恨，也切斷了日本隊在國際賽事中的27連勝神話，全國為之振奮。賽後，棒球熱也在全台持續延燒，近日有網友發現，連鎖書局墊腳石外，竟出現滿滿的排隊人潮，後來才知道民眾都是為了搶購12月號的《職業棒球》雜誌，留言區也意外釣到中華職棒聯盟會長蔡其昌的留言感謝。" \
+--reference_audio "/home/b310-21/project/voice/aasc.wav" \
+--reference_text "我認為重症照護是生死交界的最前線。在這個高壓的環境中，每一位從事重症照護的醫護人員都接受了最專業的訓練，具備應對突發狀況的能力。" \
+--format wav \
+--output "/home/b310-21/project/voice/as11" \
+--no-play
+         */
         const result = yield executeCommand(command, args, {
             shell: true,
             cwd: process.env.fishSpeechDir

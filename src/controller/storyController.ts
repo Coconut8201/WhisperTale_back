@@ -1,7 +1,7 @@
 import { Controller } from "../interfaces/Controller";
 import { Request, Response} from "express";
 import { DataBase } from "../utils/DataBase";
-import { GenImg_prompt_En, sdModelOption, getSDModelList } from "../utils/tools/LLM_fetch_images";
+import { sdModelOption, getSDModelList } from "../utils/tools/LLM_fetch_images";
 import { storyInterface } from "../interfaces/storyInterface";
 import { fetchImage } from "../utils/tools/fetch";
 import { RoleFormInterface } from "../interfaces/RoleFormInterface";
@@ -81,7 +81,6 @@ export class StoryController extends Controller {
     }
 
     const userId = (Request as any).user.id;
-    console.log(`userid: ${userId}`)
     let storyRoleForm: RoleFormInterface = Request.body.roleform;
     let voiceModelName: string = Request.body.voiceModelName;
 
