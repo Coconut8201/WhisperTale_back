@@ -18,8 +18,9 @@ export function caseSdModelUse(storyStyle: string) {
         sd_name: "",                // 要請求的模型名稱
         exclusive_prompt: "",       // 專屬生成圖片的prompt
         negative_prompt: "",        // 禁用詞
-        sampler_index: "",          // 采样器
-        sd_vae: ""                  // 模型VAE
+        sampler_index: "",          // 採樣器
+        sd_vae: "",                  // 模型VAE
+        scheduler: ""               // 調度器
     }
     switch (storyStyle) {
         // 奇幻卡通風格
@@ -45,7 +46,8 @@ export function caseSdModelUse(storyStyle: string) {
             payload.sd_name = "AnythingV5V3_v5PrtRE.safetensors";
             payload.exclusive_prompt = 'J_illustration, <lora:J_illustration:0.8>,';
             payload.negative_prompt = 'easy_negative, NSFW, (two tails:1.4),FastNegativeV2,(bad-artist:1),(loli:1.2),(worst quality, low quality:1.4),(bad_prompt_version2:0.8),bad-hands-5,lowres,bad anatomy,bad hands,((text)),(watermark),error,missing fingers,extra digit,fewer digits,cropped,worst quality,low quality,normal quality,((username)),blurry,(extra limbs),bad-artist-anime,badhandv4,EasyNegative,ng_deepnegative_v1_75t,verybadimagenegative_v1.3,BadDream,(three hands:1.1),(three legs:1.1),(more than two hands:1.2),(more than two legs:1.2), ';
-            payload.sampler_index = "DPM++ 2M SDE Karras";
+            payload.sampler_index = "DPM++ 2M SDE";
+            payload.scheduler = "Karras";
             payload.sd_vae = "vae-ft-mse-840000-ema-pruned.ckpt";
             break;
         }
@@ -56,7 +58,8 @@ export function caseSdModelUse(storyStyle: string) {
             payload.sd_name = "sdXL_v10VAEFix.safetensors [e6bb9ea85b]";
             payload.exclusive_prompt = "KidsRedmAF, <lora:StorybookRedmondV2-KidsBook-KidsRedmAF:1>, ";
             payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
-            payload.sampler_index = "DPM++ 2M Karras";
+            payload.sampler_index = "DPM++ 2M";
+            payload.scheduler = "Karras";
             break;
         }
 
@@ -74,7 +77,8 @@ export function caseSdModelUse(storyStyle: string) {
             payload.sd_name = "splatterPunkNeon_v17Illustration.safetensors";
             payload.exclusive_prompt = "<lora:childrens_story_book:1>";
             payload.negative_prompt = "civit_nsfw, bad art, ugly, deformed, watermark, duplicated, ";
-            payload.sampler_index = "DPM++ 2M Karras";
+            payload.sampler_index = "DPM++ 2M";
+            payload.scheduler = "Karras";
             break;
         }
 
@@ -83,7 +87,8 @@ export function caseSdModelUse(storyStyle: string) {
             payload.sd_name = "sdXL_v10VAEFix.safetensors [e6bb9ea85b]";
             payload.exclusive_prompt = "KidsRedmAF, <lora:StorybookRedmondV2-KidsBook-KidsRedmAF:1>, ";
             payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
-            payload.sampler_index = "DPM++ 2M Karras";
+            payload.sampler_index = "DPM++ 2M";
+            payload.scheduler = "Karras";
             break;
         }
     }
