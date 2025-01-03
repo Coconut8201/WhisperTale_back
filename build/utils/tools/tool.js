@@ -142,6 +142,8 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
             "cfg_scale": 7,
             "steps": 25,
             "enable_hr": false,
+            "width": 1024,
+            "height": 512,
             "denoising_strength": 0.75,
             "restore_faces": false,
             "negative_prompt": settingPlayload.negative_prompt + ", " + "low res, text, logo, banner, extra digits, jpeg artifacts, signature,  error, sketch ,duplicate, monochrome, horror, geometry, mutation, disgusting, nsfw, nude, censored, lowres, bad anatomy, bad hands,  missing fingers, fewer digits, cropped, worst quality, low quality, normal quality, signature, watermark, username, blurry, artist name, bad quality, poor quality, zombie, ugly, out of frame, hands",
