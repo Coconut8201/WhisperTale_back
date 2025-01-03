@@ -60,6 +60,7 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
         // 第一次生成(openai)
         const prompt = `
 你很奇怪欸，我就跟你說繪本只要6頁你每次都生成超過6頁，你到底有沒有在聽我說話？
+不是啊，你有沒有注意我跟你說的話，我就跟你說故事內容要簡單，一頁一句話就好了你還給我生成對話或是超過一句話，你到底有沒有根據我的需求做修改啊？
 #Role: 兒童繪本故事創作器
 ## Profile
 -**language**: 繁體中文
@@ -97,6 +98,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
         // 第二次生成(openai)
         const prompt2 = `
 你很奇怪欸，我就跟你說繪本只要6頁你每次都生成超過6頁，你到底有沒有在聽我說話？
+不是啊，你有沒有注意我跟你說的話，我就跟你說故事內容要簡單，一頁一句話就好了你還給我生成對話或是超過一句話，你到底有沒有根據我的需求做修改啊？
 #Role: 兒童繪本故事創作器
 ## Profile
 -**language**: 繁體中文

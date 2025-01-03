@@ -89,7 +89,6 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         console.log(`start GenImagePrompt\n`);
         await GenImagePrompt(generated_story_array || [], Saved_storyID, storyRoleForm);
 
-        // Fetch the updated story data to get the generated image prompts
         const updatedStory: storyInterface = await DataBase.getStoryById(Saved_storyID);
         const generated_story_image_prompt = updatedStory.image_prompt;
 
@@ -100,16 +99,20 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         await GenImage(generated_story_image_prompt, Saved_storyID, storyRoleForm.style);
 
         console.log(`start getVoices`);
-        const joinedStoryTale: string[] = generated_story_array.slice(1).reduce((acc: string[], curr: string, i: number) => {
-            if (i % 2 === 0) {
-                if (i + 1 < generated_story_array.length - 1) {
-                    acc.push(generated_story_array[i + 1] + generated_story_array[i + 2]);
-                } else {
-                    acc.push(curr);
-                }
-            }
-            return acc;
-        }, []);
+        // // 這邊是兩頁一個語音
+        // const joinedStoryTale: string[] = generated_story_array.slice(1).reduce((acc: string[], curr: string, i: number) => {
+        //     if (i % 2 === 0) {
+        //         if (i + 1 < generated_story_array.length - 1) {
+        //             acc.push(generated_story_array[i + 1] + generated_story_array[i + 2]);
+        //         } else {
+        //             acc.push(curr);
+        //         }
+        //     }
+        //     return acc;
+        // }, []);
+
+        // 這邊是每頁一個語音
+        const joinedStoryTale: string[] = generated_story_array.slice(1);
         await genStoryVoice(userId, Saved_storyID, joinedStoryTale, voiceModelName);
         console.log(`story generate finish !!`);
         return Saved_storyID;
