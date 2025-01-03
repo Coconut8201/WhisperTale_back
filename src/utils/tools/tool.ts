@@ -130,38 +130,60 @@ export const GenImagePrompt = async (generated_story_array: string[], _id: strin
     }
 };
 
+// 定義介面
+interface ImageGenerationPayload {
+    prompt: string;
+    seed: number;
+    cfg_scale: number;
+    steps: number;
+    enable_hr: boolean;
+    width: number;
+    height: number;
+    denoising_strength: number;
+    restore_faces: boolean;
+    negative_prompt: string;
+    sampler_index?: string;
+    scheduler?: string;
+    override_settings: {
+        sd_vae?: string;
+    };
+}
+
 // 生成圖片
 export const GenImage = async (generated_story_image_prompt: Array<string>, _id: string, sd_name: string): Promise<void> => {
     const settingPlayload = caseSdModelUse(sd_name);
-    console.log(`settingPlayload = ${JSON.stringify(settingPlayload)}`);
     let promises: Promise<string[]>[] = [];
 
-    
+    const basePayload: Partial<ImageGenerationPayload> = {
+        seed: -1,
+        cfg_scale: 7,
+        steps: 25,
+        enable_hr: false,
+        denoising_strength: 0.75,
+        restore_faces: false,
+        negative_prompt: `${settingPlayload.negative_prompt}, low res, text, logo, banner, extra digits, jpeg artifacts, signature, error, sketch, duplicate, monochrome, horror, geometry, mutation, disgusting, nsfw, nude, censored, lowres, bad anatomy, bad hands, missing fingers, fewer digits, cropped, worst quality, low quality, normal quality, signature, watermark, username, blurry, artist name, bad quality, poor quality, zombie, ugly, out of frame, hands`,
+        sampler_index: settingPlayload.sampler_index || "",
+        scheduler: settingPlayload.scheduler || "",
+        override_settings: {
+            sd_vae: settingPlayload.sd_vae || ""
+        }
+    };
 
+    // 生成所有圖片
     for (let i = 0; i < generated_story_image_prompt.length; i++) {
-        let payload: Object = {
-            "prompt": generated_story_image_prompt[i] + ", " + settingPlayload.exclusive_prompt,
-            "seed": -1,
-            "cfg_scale": 7,
-            "steps": 25,
-            "enable_hr": false,
-            "width": 1024,
-            "height": 512,
-            "denoising_strength": 0.75,
-            "restore_faces": false,
-            "negative_prompt": settingPlayload.negative_prompt + ", " + "low res, text, logo, banner, extra digits, jpeg artifacts, signature,  error, sketch ,duplicate, monochrome, horror, geometry, mutation, disgusting, nsfw, nude, censored, lowres, bad anatomy, bad hands,  missing fingers, fewer digits, cropped, worst quality, low quality, normal quality, signature, watermark, username, blurry, artist name, bad quality, poor quality, zombie, ugly, out of frame, hands",
-            "sampler_index": settingPlayload.sampler_index ? settingPlayload.sampler_index : "",
-            "scheduler": settingPlayload.scheduler ? settingPlayload.scheduler : "",
-            "override_settings": {
-                "sd_vae": settingPlayload.sd_vae ? settingPlayload.sd_vae : "",
-            }
-        };
+        const payload: ImageGenerationPayload = {
+            ...basePayload,
+            prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`,
+            width: i === 0 ? 512 : 1024,
+            height: i === 0 ? 512 : 512
+        } as ImageGenerationPayload;
+
         console.log(`GenImage 第${i}次生成`);
         promises.push(fetchImage(payload));
 
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
-
+    
     try {
         let generated_imagebase64_array: string[] = (await Promise.all(promises)).flat();
         await DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
