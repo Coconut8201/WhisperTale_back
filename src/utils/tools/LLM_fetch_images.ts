@@ -3,6 +3,7 @@ import { openAIFetch } from './openai_fetch';
 import { LLMGen_release } from "./LLMapi";
 import { RoleFormInterface } from "../../interfaces/RoleFormInterface";
 dotenv.config(); 
+
 /**
  * 更改sd option，使用想要的模型生成圖片
  * @param MODEL_NAME 要使用的sd 模型名稱
