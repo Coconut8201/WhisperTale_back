@@ -82,7 +82,6 @@ class UserController extends Controller_1.Controller {
     Logout(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(`here`);
                 const cookieOptions = {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
@@ -119,7 +118,7 @@ class UserController extends Controller_1.Controller {
                 const result = yield DataBase_1.DataBase.SaveNewUser(userName, userPassword);
                 console.log(`result = ${JSON.stringify(result)}`);
                 if (result.success) {
-                    console.log(result.message);
+                    // console.log(result.message);
                     return Response.status(200).json({ success: true, message: result.message });
                 }
                 else if (result.code === 401) {
@@ -164,7 +163,7 @@ class UserController extends Controller_1.Controller {
             Response.status(403).send(`wrong bookID`);
         }
         DataBase_1.DataBase.AddFav(BookID).then(() => {
-            console.log(`Successfully added book to favorite`);
+            // console.log(`Successfully added book to favorite`);
             Response.send(`Successfully added book to favorite`);
         }).catch((e) => {
             console.error(`Failed added book to favorite`);
@@ -177,7 +176,7 @@ class UserController extends Controller_1.Controller {
             Response.status(403).send(`wrong bookID`);
         }
         DataBase_1.DataBase.RemoveFav(BookID).then(() => {
-            console.log(`Successfully removed book to favorite`);
+            // console.log(`Successfully removed book to favorite`);
             Response.send(`Successfully removed book to favorite`);
         }).catch((e) => {
             console.error(`Failed removed book to favorite`);
@@ -253,13 +252,21 @@ class UserController extends Controller_1.Controller {
         return hasValidFields;
     }
     verifyAuth(req, res) {
-        console.log(`req.cookies.authToken: ${req.cookies.authToken}`);
+        // console.log(`req.cookies.authToken: ${req.cookies.authToken}`)
         if (req.cookies.authToken) {
             return res.status(200).json({ isAuthenticated: true });
         }
         else {
             return res.status(401).json({ isAuthenticated: false });
         }
+    }
+    verifyOwnership(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.user.id;
+            const storyId = req.query.storyId;
+            const result = yield DataBase_1.DataBase.CheckOwnership(userId, storyId);
+            return res.json({ success: result });
+        });
     }
 }
 exports.UserController = UserController;

@@ -51,7 +51,7 @@ export class DataBase{
     static async getstoryList(userId: string): Promise<any> {
         try {
             let returnUserData: any = await userModel.findById(userId);
-            console.log(`returnValue: ${JSON.stringify(returnUserData)}`)
+            // console.log(`returnValue: ${JSON.stringify(returnUserData)}`)
             if (!returnUserData) {
                 return { success: false, message: 'getstoryList fail, user not found' };
             }
@@ -309,6 +309,17 @@ export class DataBase{
                 success: false,
                 message: `添加書本ID失敗: ${e.message}`
             };
+        }
+    }
+
+    public static async CheckOwnership(userId: string, storyId: string): Promise<boolean> {
+        try {
+            const user = await userModel.findById(userId);
+            if (!user || !user.booklist) return false;
+            return user.booklist.some(id => id.toString() === storyId);
+        } catch (e) {
+            console.error(`檢查所有權失敗: ${e}`);
+            return false;
         }
     }
 }

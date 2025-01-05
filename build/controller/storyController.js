@@ -57,7 +57,7 @@ class StoryController extends Controller_1.Controller {
                     success: true,
                     storyId: result
                 };
-                console.log(`return_playload = ${JSON.stringify(return_playload)}`);
+                // console.log(`return_playload = ${JSON.stringify(return_playload)}`);
                 return Response.status(200).send(return_playload);
             }
             catch (error) {
@@ -69,7 +69,6 @@ class StoryController extends Controller_1.Controller {
             }
         });
         this.ReGenImage = (Request, Response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(`here`);
             let { prompt } = Request.body;
             let payload = {
                 "prompt": prompt,

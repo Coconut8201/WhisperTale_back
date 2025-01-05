@@ -94,7 +94,7 @@ export class StoryController extends Controller {
           success: true,
           storyId: result
         };
-        console.log(`return_playload = ${JSON.stringify(return_playload)}`);
+        // console.log(`return_playload = ${JSON.stringify(return_playload)}`);
         return Response.status(200).send(return_playload);
     } catch (error:any) {
       console.error(`Error in generateStory: ${error.message}`);
@@ -115,7 +115,6 @@ export class StoryController extends Controller {
   }
 
   public ReGenImage = async (Request: Request, Response: Response) => {
-    console.log(`here`);
     let { prompt } = Request.body;
     let payload: Object = {
       "prompt": prompt,

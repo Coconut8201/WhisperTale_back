@@ -35,7 +35,7 @@ export class VoiceController extends Controller{
         return new Promise((resolve, reject) => {
             ffmpeg()
                 .input(sourceAudioPath)
-                .outputOptions(['-f segment', '-segment_time 8', '-reset_timestamps 1'])
+                .outputOptions(['-f segment', '-segment_time 10', '-reset_timestamps 1'])
                 .output(path.join(tempFolder, 'segment_%03d.wav'))
                 .on('end', (stdout: string | null, stderr: string | null) => resolve())
                 .on('error', reject)

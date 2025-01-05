@@ -17,6 +17,7 @@ class UserRoute extends Route_1.Route {
     // http://localhost:7943/user
     // http://localhost:7943/user/logout
     // http://localhost:7943/user/verify-auth
+    // http://localhost:7943/user/verify-ownership
     setRoutes() {
         this.router.get(`${this.url}`, this.Controller.test);
         this.router.post(`${this.url}/login`, this.Controller.Login);
@@ -28,6 +29,7 @@ class UserRoute extends Route_1.Route {
         this.router.get('/profile', autherMiddleware_1.authenticateToken, userController.GetProfile);
         this.router.put('/profile', autherMiddleware_1.authenticateToken, userController.UpdateProfile);
         this.router.get(`${this.url}/verify-auth`, userController.verifyAuth);
+        this.router.get(`${this.url}/verify-ownership`, autherMiddleware_1.authenticateToken, userController.verifyOwnership);
     }
 }
 exports.UserRoute = UserRoute;

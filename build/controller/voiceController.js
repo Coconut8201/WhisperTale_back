@@ -127,7 +127,7 @@ class VoiceController extends Controller_1.Controller {
             return new Promise((resolve, reject) => {
                 (0, fluent_ffmpeg_1.default)()
                     .input(sourceAudioPath)
-                    .outputOptions(['-f segment', '-segment_time 8', '-reset_timestamps 1'])
+                    .outputOptions(['-f segment', '-segment_time 10', '-reset_timestamps 1'])
                     .output(path_1.default.join(tempFolder, 'segment_%03d.wav'))
                     .on('end', (stdout, stderr) => resolve())
                     .on('error', reject)
