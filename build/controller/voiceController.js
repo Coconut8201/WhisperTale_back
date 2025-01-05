@@ -22,6 +22,7 @@ const fetch_1 = require("../utils/tools/fetch");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
+const f5tts_inference_Voice_1 = require("../utils/tools/f5tts_inference_Voice");
 class VoiceController extends Controller_1.Controller {
     constructor() {
         super(...arguments);
@@ -153,12 +154,26 @@ class VoiceController extends Controller_1.Controller {
         var _a;
         const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
         const { storyId, pageIndex } = req.body;
-        const voicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+        const voicePath = `${process.env.dev_saveF5ttsAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
         console.log(`voicePath: ${voicePath}`);
         if (!fs_1.default.existsSync(voicePath)) {
             return res.status(404).json({ code: 404, message: '無法找到語音' });
         }
         res.sendFile(voicePath);
+    }
+    testf5tts(req, res) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+            const { storyId, pageIndex } = req.body;
+            const voicePath = `${process.env.dev_saveF5ttsAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+            console.log(`voicePath: ${voicePath}`);
+            const storyText = "有一隻小狐狸小紅";
+            const voiceName = "test";
+            const userVoiceName = "Coco";
+            const result = yield (0, f5tts_inference_Voice_1.genF5ttsVoice)(userId, storyId, storyText, voiceName, userVoiceName);
+            res.sendFile(voicePath);
+        });
     }
 }
 exports.VoiceController = VoiceController;

@@ -65,7 +65,7 @@ export const genFishVoice = async (userId: string, storyId: string, storyText: s
         
         const command = 'python';
         const args = [
-            '-m', 'tools.api_client',
+            'tools.api_client',
             '--url', process.env.fishSpeechApi as string,
             '--text', storyText + '。',
         ];

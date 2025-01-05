@@ -8,6 +8,7 @@ import { callLocalWhisper } from "../utils/tools/fetch";
 import dotenv from 'dotenv';
 dotenv.config();
 import ffmpeg from 'fluent-ffmpeg';
+import { genF5ttsVoice } from "../utils/tools/f5tts_inference_Voice";
 
 export class VoiceController extends Controller{
     public test(Request:Request, Response:Response){
@@ -140,11 +141,23 @@ export class VoiceController extends Controller{
     public takeVoice(req: Request, res: Response) {
         const userId = (req as any).user?.id;
         const { storyId, pageIndex } = req.body;
-        const voicePath = `${process.env.dev_saveAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+        const voicePath = `${process.env.dev_saveF5ttsAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
         console.log(`voicePath: ${voicePath}`)
         if (!fs.existsSync(voicePath)) {
             return res.status(404).json({code: 404, message: '無法找到語音'});
         }
+        res.sendFile(voicePath);
+    }
+
+    public async testf5tts(req: Request, res: Response) {
+        const userId = (req as any).user?.id;
+        const { storyId, pageIndex } = req.body;
+        const voicePath = `${process.env.dev_saveF5ttsAudio}/user_${userId}/story_${storyId}/page${pageIndex}.wav`;
+        console.log(`voicePath: ${voicePath}`)
+        const storyText = "有一隻小狐狸小紅";
+        const voiceName = "test";
+        const userVoiceName = "Coco"
+        const result = await genF5ttsVoice(userId, storyId, storyText, voiceName, userVoiceName);
         res.sendFile(voicePath);
     }
 }

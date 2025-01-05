@@ -74,7 +74,7 @@ const genFishVoice = (userId, storyId, storyText, voiceName, userVoiceName) => _
         const referenceAudios = wavFiles.map(file => `${userVoicePath}/${file}`).slice(1);
         const command = 'python';
         const args = [
-            '-m', 'tools.api_client',
+            'tools.api_client',
             '--url', process.env.fishSpeechApi,
             '--text', storyText + '。',
         ];

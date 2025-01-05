@@ -157,7 +157,7 @@ class StoryController extends Controller_1.Controller {
                 if (!storyId) {
                     return Response.status(400).send('storyId is required');
                 }
-                const filePath = path_1.default.resolve(process.env.dev_saveAudio, `Saved_${storyId}.wav`);
+                const filePath = path_1.default.resolve(process.env.dev_saveF5ttsAudio, `Saved_${storyId}.wav`);
                 // console.log(`filePath = ${filePath}`);
                 if (!fs_1.default.existsSync(filePath)) {
                     console.error('File not found:', filePath);

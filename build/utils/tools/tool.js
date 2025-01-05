@@ -19,7 +19,7 @@ const sdModel_tool_1 = require("./sdModel_tool");
 const LLM_fetch_images_1 = require("./LLM_fetch_images");
 const DataBase_1 = require("../DataBase");
 const LLMapi_1 = require("./LLMapi");
-const trainVoiceModel_1 = require("./trainVoiceModel");
+const f5tts_inference_Voice_1 = require("./f5tts_inference_Voice");
 const delayedExecution = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Waiting for 3 seconds...');
     yield new Promise(resolve => setTimeout(resolve, 1000)); // 等待 3 秒鐘
@@ -42,13 +42,25 @@ const CurrentTime = () => {
     return formattedTime;
 };
 exports.CurrentTime = CurrentTime;
-// 生成語音（fish speech）
+// 生成語音（f5tts）
 const genStoryVoice = (userId, storyId, joinedStoryTale, userVoiceName) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const results = yield Promise.all(joinedStoryTale.map((storySegment, index) => {
-            const voiceName = 'page' + (index + 1).toString();
-            return (0, trainVoiceModel_1.genFishVoice)(userId, storyId, storySegment, voiceName, userVoiceName);
-        }));
+        // 使用 chunking 方法，每次處理特定數量的語音
+        const chunkSize = 3; // 可以根據您的 GPU 記憶體調整這個數字
+        const results = [];
+        for (let i = 0; i < joinedStoryTale.length; i += chunkSize) {
+            const chunk = joinedStoryTale.slice(i, i + chunkSize);
+            // 處理當前批次的語音生成
+            const chunkResults = yield Promise.all(chunk.map((storySegment, index) => {
+                const voiceName = 'page' + (i + index + 1).toString();
+                return (0, f5tts_inference_Voice_1.genF5ttsVoice)(userId, storyId, storySegment, voiceName, userVoiceName);
+            }));
+            results.push(...chunkResults);
+            // 在批次之間添加短暫延遲，讓 GPU 有時間釋放記憶體
+            if (i + chunkSize < joinedStoryTale.length) {
+                yield new Promise(resolve => setTimeout(resolve, 300));
+            }
+        }
         return results.every(result => result === true);
     }
     catch (error) {

@@ -143,7 +143,7 @@ export class StoryController extends Controller {
         return Response.status(400).send('storyId is required');
       }
 
-      const filePath = path.resolve(process.env.dev_saveAudio!, `Saved_${storyId}.wav`);
+      const filePath = path.resolve(process.env.dev_saveF5ttsAudio!, `Saved_${storyId}.wav`);
       // console.log(`filePath = ${filePath}`);
 
       if (!fs.existsSync(filePath)) {
