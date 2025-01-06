@@ -171,7 +171,7 @@ interface ImageGenerationPayload {
 // 生成圖片
 export const GenImage = async (generated_story_image_prompt: Array<string>, _id: string, sd_name: string): Promise<void> => {
     const settingPlayload = caseSdModelUse(sd_name);
-    let promises: Promise<string[]>[] = [];
+    let generated_imagebase64_array: string[] = [];
 
     const basePayload: Partial<ImageGenerationPayload> = {
         seed: -1,
@@ -188,25 +188,26 @@ export const GenImage = async (generated_story_image_prompt: Array<string>, _id:
         }
     };
 
-    // 生成所有圖片
     for (let i = 0; i < generated_story_image_prompt.length; i++) {
-        const payload: ImageGenerationPayload = {
-            ...basePayload,
-            prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`,
-            width: i === 0 ? 512 : 1024,
-            height: i === 0 ? 512 : 512
-        } as ImageGenerationPayload;
+        try {
+            const payload = {
+                ...basePayload,
+                prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`,
+                width: i === 0 ? 512 : 1024,
+                height: i === 0 ? 512 : 512
+            } as ImageGenerationPayload;
 
-        console.log(`GenImage 第${i}次生成`);
-        promises.push(fetchImage(payload));
+            const result = await fetchImage(payload);
+            generated_imagebase64_array.push(result);
 
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    
-    try {
-        let generated_imagebase64_array: string[] = (await Promise.all(promises)).flat();
-        await DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
-    } catch (error: any) {
-        console.error(`Error in GenImage: ${error.message}`);
+            await DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
+            if (i < generated_story_image_prompt.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        } catch (error) {
+            console.error(`生成第 ${i + 1} 張圖片時發生錯誤:`, error);
+            // 可以選擇繼續處理下一張圖，或是拋出錯誤
+            continue;
+        }
     }
 };

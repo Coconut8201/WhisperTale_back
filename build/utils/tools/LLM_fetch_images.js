@@ -68,7 +68,7 @@ const GenImg_prompt_En = (story_slice, storyRoleForm) => __awaiter(void 0, void 
 
 ##任務
 
-我用自然語言告訴你要產生的prompt的主題，你的任務是根據這個主題想像一幅完整的畫面，然後轉化成一份詳細的、高品質的prompt，讓Stable Diffusion可以產生高品質的影像。
+我用自然語言告訴你要產生的prompt的情境主題，你的任務是根據這個主題想像一幅完整的畫面，然後轉化成一份詳細的、高品質的prompt，讓Stable Diffusion可以產生高品質的影像。
 
 ## 背景介紹
 

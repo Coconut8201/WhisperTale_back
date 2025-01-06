@@ -146,7 +146,7 @@ exports.GenImagePrompt = GenImagePrompt;
 // 生成圖片
 const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 0, void 0, void 0, function* () {
     const settingPlayload = (0, sdModel_tool_1.caseSdModelUse)(sd_name);
-    let promises = [];
+    let generated_imagebase64_array = [];
     const basePayload = {
         seed: -1,
         cfg_scale: 7,
@@ -161,19 +161,21 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
             sd_vae: settingPlayload.sd_vae || ""
         }
     };
-    // 生成所有圖片
     for (let i = 0; i < generated_story_image_prompt.length; i++) {
-        const payload = Object.assign(Object.assign({}, basePayload), { prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`, width: i === 0 ? 512 : 1024, height: i === 0 ? 512 : 512 });
-        console.log(`GenImage 第${i}次生成`);
-        promises.push((0, fetch_1.fetchImage)(payload));
-        yield new Promise(resolve => setTimeout(resolve, 100));
-    }
-    try {
-        let generated_imagebase64_array = (yield Promise.all(promises)).flat();
-        yield DataBase_1.DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
-    }
-    catch (error) {
-        console.error(`Error in GenImage: ${error.message}`);
+        try {
+            const payload = Object.assign(Object.assign({}, basePayload), { prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`, width: i === 0 ? 512 : 1024, height: i === 0 ? 512 : 512 });
+            const result = yield (0, fetch_1.fetchImage)(payload);
+            generated_imagebase64_array.push(result);
+            yield DataBase_1.DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
+            if (i < generated_story_image_prompt.length - 1) {
+                yield new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+        catch (error) {
+            console.error(`生成第 ${i + 1} 張圖片時發生錯誤:`, error);
+            // 可以選擇繼續處理下一張圖，或是拋出錯誤
+            continue;
+        }
     }
 });
 exports.GenImage = GenImage;
