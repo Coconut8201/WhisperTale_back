@@ -10,5 +10,5 @@ dev:
 後端：
     http://163.13.202.128:7943
 
-conda activate fish-speech
+conda activate f5-ttss
 npm run dev

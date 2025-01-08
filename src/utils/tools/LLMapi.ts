@@ -69,7 +69,7 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友創作一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友創作一個優秀且有連貫性有趣的繪本故事。
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
@@ -108,7 +108,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友修改故事${story_1st}成一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友修改故事${story_1st}成一個優秀且有連貫性有趣的繪本故事。
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
