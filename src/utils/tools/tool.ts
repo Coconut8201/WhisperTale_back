@@ -34,14 +34,12 @@ export const CurrentTime = () =>{
 // 生成語音（f5tts）
 export const genStoryVoice = async (userId: string, storyId: string, joinedStoryTale: string[], userVoiceName: string): Promise<boolean> => {
     try {
-        // 使用 chunking 方法，每次處理特定數量的語音
-        const chunkSize = 3; // 可以根據您的 GPU 記憶體調整這個數字
+        const chunkSize = 3;
         const results: boolean[] = [];
 
         for (let i = 0; i < joinedStoryTale.length; i += chunkSize) {
             const chunk = joinedStoryTale.slice(i, i + chunkSize);
             
-            // 處理當前批次的語音生成
             const chunkResults = await Promise.all(
                 chunk.map((storySegment, index) => {
                     const voiceName = 'page' + (i + index + 1).toString();
@@ -51,7 +49,6 @@ export const genStoryVoice = async (userId: string, storyId: string, joinedStory
             
             results.push(...chunkResults);
 
-            // 在批次之間添加短暫延遲，讓 GPU 有時間釋放記憶體
             if (i + chunkSize < joinedStoryTale.length) {
                 await new Promise(resolve => setTimeout(resolve, 300));
             }
