@@ -73,17 +73,18 @@ const LLMGenStory_1st_2nd = (storyRoleForm, Response, userId, bookType) => __awa
 ## Profile
 -**language**: 繁體中文
 -**bookType**: 請你根據${bookType}的類型，創作一個種類為${bookType}的故事
--**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
+-**description**: 你是一位想像力豐富、精通兒童心理的專業繪本故事作家，請參考《Guess How Much I Love You》、
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友創作一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友創作一個優秀且有趣的繪本故事。故事應該適合3-5歲的小朋友閱讀。
+特別注重於故事情節${storyRoleForm.description}，請使用3-5能理解的語言表達。故事情節應該有連貫性，且能激發讀者想像力的元素，並以歡樂的方式結束。
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
 故事情節: ${storyRoleForm.description}
 其他角色設定: ${storyRoleForm.relationships}
-## 要求：
+## 故事要求：
 0. 繪本的頁數固定為6頁。
 1. 故事簡單易懂，並且使用非常簡單的短句子。
 2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
@@ -98,8 +99,11 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
 11. 繪本的頁數固定為6頁。
 12. 僅需回覆包含故事標題的故事內容，不需回答其他任何資訊如頁數，或用任何符號文字表示分頁或頁數，不同的頁數之間用\n\n 做分頁代表就可以了，同一頁的對話使用\n連接。以下為一個回傳的故事格式範例：
 《小狐狸和月亮》\n\n 小狐狸走著，發現月亮跟著它。\n\n小狐狸抬頭問：「月亮，為什麼你跟著我？」\n\n月亮說：「因為我喜歡看你玩！」\n\n小狐狸說：「那我們一起玩吧！」\n\n月亮的光，幫小狐狸找到藏起來的小朋友。\n\n小狐狸笑著說：「謝謝你，月亮！」
+13. 使用具體且容易視覺話的詞彙
+14. 使用肯定句
+15. 避免需要過度聯想的概念
 
-## 回覆:
+## 範例輸出:
 僅需包含故事標題的故事內容，不需回答其他任何資訊，以下為一個回傳的故事格式範例：
 《小狐狸和月亮》\n\n 小狐狸走著，發現月亮跟著它。\n\n小狐狸抬頭問：「月亮，為什麼你跟著我？」\n\n月亮說：「因為我喜歡看你玩！」\n\n小狐狸說：「那我們一起玩吧！」\n\n月亮的光，幫小狐狸找到藏起來的小朋友。\n\n小狐狸笑著說：「謝謝你，月亮！」`;
         const story_1st = yield (0, openai_fetch_1.openAIFetch)(prompt);
@@ -111,17 +115,19 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
 ## Profile
 -**language**: 繁體中文
 -**bookType**: 請你根據${bookType}的類型，創作一個種類為${bookType}的故事
--**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
+-**description**: 你是一位想像力豐富、精通兒童心理的專業繪本故事作家，請參考《Guess How Much I Love You》、
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
 的故事結構、情節設定，以及Eric Carle, Maurice Sendak, Dr. Seuss(Theodor Seuss Geisel), Julia Donaldoson, 
-Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友修改故事${story_1st}成一個優秀且有趣的繪本故事。
+Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋友修改故事${story_1st}成一個優秀且有連貫性有趣的繪本故事。故事應該適合3-5歲的小朋友閱讀。
+特別注重於故事情節${storyRoleForm.description}，請使用3-5能理解的語言表達。故事情節應該有連貫性，且能激發讀者想像力的元素，並以歡樂的方式結束。
+
 以下為這本繪本故事的故事資訊：
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
 故事情節: ${storyRoleForm.description}
 其他角色設定: ${storyRoleForm.relationships}
-## 要求：
+## 故事要求：
 0. 繪本的頁數固定為6頁。
 1. 故事簡單易懂，並且使用非常簡單的短句子。
 2. 故事內容生動有趣，如可愛的動物或有趣的轉折。
@@ -136,8 +142,11 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
 11. 繪本的頁數固定為6頁。
 12. 僅需回覆包含故事標題的故事內容，不需回答其他任何資訊如頁數，或用任何符號文字表示分頁或頁數，不同的頁數之間用\n\n 做分頁代表就可以了，同一頁的對話使用\n連接。以下為一個回傳的故事格式範例：
 《小狐狸和月亮》\n\n 小狐狸走著，發現月亮跟著它。\n\n小狐狸抬頭問：「月亮，為什麼你跟著我？」\n\n月亮說：「因為我喜歡看你玩！」\n\n小狐狸說：「那我們一起玩吧！」\n\n月亮的光，幫小狐狸找到藏起來的小朋友。\n\n小狐狸笑著說：「謝謝你，月亮！」
+13. 使用具體且容易視覺話的詞彙
+14. 使用肯定句
+15. 避免需要過度聯想的概念
 
-## 回覆:
+## 範例輸出:
 僅需包含故事標題的故事內容，不需回答其他任何資訊，以下為一個回傳的故事格式範例：
 《小狐狸和月亮》\n\n 小狐狸走著，發現月亮跟著它。\n\n小狐狸抬頭問：「月亮，為什麼你跟著我？」\n\n月亮說：「因為我喜歡看你玩！」\n\n小狐狸說：「那我們一起玩吧！」\n\n月亮的光，幫小狐狸找到藏起來的小朋友。\n\n小狐狸笑著說：「謝謝你，月亮！」`;
         const story_2nd = yield (0, openai_fetch_1.openAIFetch)(prompt2); // 繁中

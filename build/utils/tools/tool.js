@@ -88,7 +88,6 @@ const generateStory = (storyRoleForm, voiceModelName, bookType, userId) => __awa
         }
         console.log(`Saved_storyID = ${Saved_storyID}`);
         const story = yield DataBase_1.DataBase.getStoryById(Saved_storyID);
-        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
         const converter = opencc_js_1.default.Converter({ from: 'tw', to: 'cn' });
         const transStory = converter(story.storyTale);
         let generated_story_array = transStory.split("\n\n") //  這邊開始是簡體中文

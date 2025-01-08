@@ -87,7 +87,6 @@ export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModel
         console.log(`Saved_storyID = ${Saved_storyID}`);
 
         const story: storyInterface = await DataBase.getStoryById(Saved_storyID);
-        // 因為使用fish speech 的關係文字需要調整成簡體中文效果會比較好
         const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
         const transStory: string = converter(story.storyTale);
 

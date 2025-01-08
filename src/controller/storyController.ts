@@ -95,7 +95,6 @@ export class StoryController extends Controller {
           success: true,
           storyId: result
         };
-        // console.log(`return_playload = ${JSON.stringify(return_playload)}`);
         return Response.status(200).send(return_playload);
     } catch (error:any) {
       console.error(`Error in generateStory: ${error.message}`);
