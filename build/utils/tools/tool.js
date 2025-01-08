@@ -80,9 +80,9 @@ const removeEnglish = (str) => {
     return str.replace(/[a-zA-Z]/g, '');
 };
 // 生成故事內容
-const generateStory = (storyRoleForm, voiceModelName, userId) => __awaiter(void 0, void 0, void 0, function* () {
+const generateStory = (storyRoleForm, voiceModelName, bookType, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let Saved_storyID = yield (0, LLMapi_1.LLMGenStory_1st_2nd)(storyRoleForm, Response, userId);
+        let Saved_storyID = yield (0, LLMapi_1.LLMGenStory_1st_2nd)(storyRoleForm, Response, userId, bookType);
         if (!Saved_storyID) {
             throw new Error('Failed to generate story ID，生成故事失敗');
         }

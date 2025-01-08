@@ -83,13 +83,14 @@ export class StoryController extends Controller {
     const userId = (Request as any).user.id;
     let storyRoleForm: RoleFormInterface = Request.body.roleform;
     let voiceModelName: string = Request.body.voiceModelName;
+    let bookType: string = Request.body.bookType;
 
     console.log(`Request.body = ${JSON.stringify(Request.body)}`); // 傳入的角色設定
     const MODEL_NAME = storyRoleForm.style;
     await sdModelOption(MODEL_NAME);
 
     try {
-        const result:string = await this.queue.add(() => generateStory(storyRoleForm, voiceModelName, userId));
+        const result:string = await this.queue.add(() => generateStory(storyRoleForm, voiceModelName, bookType, userId));
         let return_playload = {
           success: true,
           storyId: result

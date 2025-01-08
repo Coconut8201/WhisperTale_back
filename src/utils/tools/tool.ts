@@ -78,9 +78,9 @@ const removeEnglish = (str: string): string => {
 };
 
 // 生成故事內容
-export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModelName:string, userId: string): Promise<string> => {
+export const generateStory = async (storyRoleForm: RoleFormInterface, voiceModelName:string, bookType:string, userId: string): Promise<string> => {
     try {
-        let Saved_storyID = await LLMGenStory_1st_2nd(storyRoleForm, Response, userId);
+        let Saved_storyID = await LLMGenStory_1st_2nd(storyRoleForm, Response, userId, bookType);
         if (!Saved_storyID) {
             throw new Error('Failed to generate story ID，生成故事失敗');
         }

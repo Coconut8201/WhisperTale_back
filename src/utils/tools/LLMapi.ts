@@ -54,7 +54,7 @@ export declare let generated_story_array:string[];
  * @param {Response} Response 回應status code，不回傳其他東西
  * @return {Object<string>} Saved_storyID 剛儲存好故事的唯一id
  */
-export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Response:any, userId: string) =>{
+export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Response:any, userId: string, bookType:string) =>{
     let storyInfo = storyRoleForm.description;
     try {
         // 第一次生成(openai)
@@ -64,6 +64,7 @@ export const LLMGenStory_1st_2nd = async (storyRoleForm: RoleFormInterface, Resp
 #Role: 兒童繪本故事創作器
 ## Profile
 -**language**: 繁體中文
+-**bookType**: 請你根據${bookType}的類型，創作一個種類為${bookType}的故事
 -**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
@@ -102,6 +103,7 @@ Margaret Wise Brown,Oliver Jeffers 等頂級作家的風格，為3-5歲的小朋
 #Role: 兒童繪本故事創作器
 ## Profile
 -**language**: 繁體中文
+-**bookType**: 請你根據${bookType}的類型，創作一個種類為${bookType}的故事
 -**description**: 你是一位想像力豐富、精通兒童心理的繪本作家，請參考《Guess How Much I Love You》、
 《The Very Hungry Caterpillar》、《The True Story of the 3 Little Pigs》、《Wherever You Are: MyLove Will Find You》、
 《The Moon Forgot、Where's MyTeddy》、《The Fox and Tthe star》、《I'll Love You Till The Cows Come Home》等精彩
