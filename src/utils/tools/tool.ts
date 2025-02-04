@@ -162,6 +162,13 @@ interface ImageGenerationPayload {
     override_settings: {
         sd_vae?: string;
     };
+    controlnet: {
+        args: {
+            input_image: string;
+            module: string;
+            model: string;
+        }
+    }
 }
 
 // 生成圖片
@@ -171,6 +178,8 @@ export const GenImage = async (generated_story_image_prompt: Array<string>, _id:
 
     const basePayload: Partial<ImageGenerationPayload> = {
         seed: -1,
+        width: 594,
+        height: 420,
         cfg_scale: 7,
         steps: 25,
         enable_hr: false,
@@ -181,6 +190,13 @@ export const GenImage = async (generated_story_image_prompt: Array<string>, _id:
         scheduler: settingPlayload.scheduler || "",
         override_settings: {
             sd_vae: settingPlayload.sd_vae || ""
+        },
+        controlnet: {
+            args: {
+                input_image: "/Users/coco/Downloads/GeorgeImg.png",
+                module: "t2ia_style_clipvision",
+                model: "IP Adapter Instant ID SDXL [eb2d3ec0]"
+            }
         }
     };
 
@@ -189,8 +205,8 @@ export const GenImage = async (generated_story_image_prompt: Array<string>, _id:
             const payload = {
                 ...basePayload,
                 prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`,
-                width: i === 0 ? 512 : 1024,
-                height: i === 0 ? 512 : 512
+                width: i === 0 ? 594 : 594,
+                height: i === 0 ? 420 : 420
             } as ImageGenerationPayload;
 
             const result = await fetchImage(payload);
@@ -202,7 +218,6 @@ export const GenImage = async (generated_story_image_prompt: Array<string>, _id:
             }
         } catch (error) {
             console.error(`生成第 ${i + 1} 張圖片時發生錯誤:`, error);
-            // 可以選擇繼續處理下一張圖，或是拋出錯誤
             continue;
         }
     }

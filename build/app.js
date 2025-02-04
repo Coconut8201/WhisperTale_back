@@ -20,6 +20,7 @@ const DB = new DataBase_1.DataBase(process.env.mongoDB_api);
 const corsOptions = {
     origin: (origin, callback) => {
         const allowedOrigins = [
+            'http://localhost:3151',
             'https://163.13.202.128',
             'http://163.13.202.128:3151',
             'https://163.13.202.128:3151'
@@ -65,11 +66,11 @@ app.use((req, res, next) => {
     next();
 });
 //=============================================
-// // //dev 開發
-// app.listen(port, () => {
-//     console.log(`Server: http://127.0.0.1:${port}/user`)
-// });
-//use 使用
-app.listen(port, ip, () => {
-    console.log(`Server: http://${ip}:${port}/user`);
+//dev 開發
+app.listen(port, () => {
+    console.log(`Server: http://127.0.0.1:${port}/user`);
 });
+// //use 使用
+// app.listen(port, ip,() => {
+//     console.log(`Server: http://${ip}:${port}/user`)
+// });

@@ -74,7 +74,7 @@ export function caseSdModelUse(storyStyle: string) {
         
         // 立體卡通風格
         case "cartoon3d": {
-            payload.sd_name = "splatterPunkNeon_v17Illustration.safetensors";
+            payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
             payload.exclusive_prompt = "<lora:childrens_story_book:1>";
             payload.negative_prompt = "civit_nsfw, bad art, ugly, deformed, watermark, duplicated, ";
             payload.sampler_index = "DPM++ 2M";
@@ -82,11 +82,11 @@ export function caseSdModelUse(storyStyle: string) {
             break;
         }
 
-        // 卡通繪本風格
+        // 立體卡通風格
         default: {
-            payload.sd_name = "sdXL_v10VAEFix.safetensors [e6bb9ea85b]";
-            payload.exclusive_prompt = "KidsRedmAF, <lora:StorybookRedmondV2-KidsBook-KidsRedmAF:1>, ";
-            payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
+            payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
+            payload.exclusive_prompt = "<lora:childrens_story_book:1>";
+            payload.negative_prompt = "civit_nsfw, bad art, ugly, deformed, watermark, duplicated, ";
             payload.sampler_index = "DPM++ 2M";
             payload.scheduler = "Karras";
             break;

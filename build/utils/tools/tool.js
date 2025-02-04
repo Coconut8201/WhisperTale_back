@@ -145,6 +145,8 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
     let generated_imagebase64_array = [];
     const basePayload = {
         seed: -1,
+        width: 594,
+        height: 420,
         cfg_scale: 7,
         steps: 25,
         enable_hr: false,
@@ -155,11 +157,18 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
         scheduler: settingPlayload.scheduler || "",
         override_settings: {
             sd_vae: settingPlayload.sd_vae || ""
+        },
+        controlnet: {
+            args: {
+                input_image: "/Users/coco/Downloads/GeorgeImg.png",
+                module: "t2ia_style_clipvision",
+                model: "IP Adapter Instant ID SDXL [eb2d3ec0]"
+            }
         }
     };
     for (let i = 0; i < generated_story_image_prompt.length; i++) {
         try {
-            const payload = Object.assign(Object.assign({}, basePayload), { prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`, width: i === 0 ? 512 : 1024, height: i === 0 ? 512 : 512 });
+            const payload = Object.assign(Object.assign({}, basePayload), { prompt: `${generated_story_image_prompt[i]}, ${settingPlayload.exclusive_prompt}`, width: i === 0 ? 594 : 594, height: i === 0 ? 420 : 420 });
             const result = yield (0, fetch_1.fetchImage)(payload);
             generated_imagebase64_array.push(result);
             yield DataBase_1.DataBase.Update_StoryImage_Base64(_id, generated_imagebase64_array);
@@ -169,7 +178,6 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
         }
         catch (error) {
             console.error(`生成第 ${i + 1} 張圖片時發生錯誤:`, error);
-            // 可以選擇繼續處理下一張圖，或是拋出錯誤
             continue;
         }
     }

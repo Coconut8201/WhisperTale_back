@@ -4,39 +4,6 @@ dotenv.config();
 import fs from 'fs';
 import path from 'path';
 
-// const findLatestFile = (directory: string, prefix: string): string | null => {
-//     try {
-//         const allFiles = fs.readdirSync(directory);
-//         const filteredFiles = allFiles.filter(file => file.startsWith(prefix) && file.endsWith('.pth'));
-
-//         if (filteredFiles.length === 0) {
-//             console.log('沒有找到符合條件的檔案');
-//             return null;
-//         }
-
-//         const sortedFiles = filteredFiles.sort((a, b) => {
-//             const partsA = a.split('_');
-//             const partsB = b.split('_');
-            
-//             // 比較 e 值
-//             const eA = parseInt(partsA[1].substring(1));
-//             const eB = parseInt(partsB[1].substring(1));
-//             if (eA !== eB) return eB - eA;
-            
-//             // 如果 e 值相同，比較 s 值
-//             const sA = parseInt(partsA[2].substring(1));
-//             const sB = parseInt(partsB[2].substring(1));
-//             return sB - sA;
-//         });
-//         console.log(`選擇的檔案：${sortedFiles[0]}`);
-
-//         return sortedFiles[0] || null;
-//     } catch (error) {
-//         console.error(`查找檔案時出錯：${error}`);
-//         return null;
-//     }
-// };
-
 // whisper 語音轉文字
 export const whisperCall = async (filePath: string) => {
     const data = fs.readFileSync(filePath);
@@ -56,6 +23,7 @@ export const whisperCall = async (filePath: string) => {
 }
 
 export const fetchImage = async (payload:Object) => {
+    console.log(`payload: ${JSON.stringify(payload)}`);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
