@@ -8,9 +8,9 @@ export const sdmodel_list: sdmodel_back[] = [
     { sd_name: "zbaseHighQualityAesthetic_sdxlV30.safetensors", show_name: "奇幻卡通風格"},  
     { sd_name: "realisticVisionV60B1_v51HyperVAE.safetensors [f47e942ad4", show_name: "寫實風格"},
     { sd_name: "AnythingV5V3_v5PrtRE.safetensors", show_name: "可愛卡通風格"},
-    { sd_name: "sdXL_v10VAEFix.safetensors [e6bb9ea85b]", show_name: "卡通繪本風格"}, 
+    { sd_name: "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]", show_name: "卡通繪本風格"}, 
     { sd_name: "sdxlUnstableDiffusers_v11Rundiffusion.safetensors [dda8c0514c]", show_name: "手繪風格"},
-    { sd_name: "sdXL_v10VAEFix.safetensors [e6bb9ea85b]", show_name: "立體卡通風格"},
+    { sd_name: "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]", show_name: "立體卡通風格"},
 ]
 
 export function caseSdModelUse(storyStyle: string) {
@@ -55,7 +55,7 @@ export function caseSdModelUse(storyStyle: string) {
 
         // 卡通繪本風格
         case "storybookRedmond": {
-            payload.sd_name = "sdXL_v10VAEFix.safetensors [e6bb9ea85b]";
+            payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
             payload.exclusive_prompt = "KidsRedmAF, <lora:StorybookRedmondV2-KidsBook-KidsRedmAF:1>, ";
             payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
             payload.sampler_index = "DPM++ 2M";
@@ -82,11 +82,11 @@ export function caseSdModelUse(storyStyle: string) {
             break;
         }
 
-        // 立體卡通風格
+        // 卡通繪本風格
         default: {
             payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
-            payload.exclusive_prompt = "<lora:childrens_story_book:1>";
-            payload.negative_prompt = "civit_nsfw, bad art, ugly, deformed, watermark, duplicated, ";
+            payload.exclusive_prompt = "KidsRedmAF, <lora:Storybook Redmond Kids Book v2.0:1>, ";
+            payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
             payload.sampler_index = "DPM++ 2M";
             payload.scheduler = "Karras";
             break;
