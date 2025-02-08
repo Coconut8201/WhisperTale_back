@@ -87,6 +87,7 @@ Stable Diffusion是一款利用深度學習的文生圖模型，支援透過使�
 - 藝術風格：這部分描述圖像的風格。加入恰當的藝術風格，能提升生成的影像效果。常用的藝術風格例如：portraits,landscape,horror,anime,sci-fi,photography,concept artists等。
 - 色彩色調：顏色，透過添加顏色來控制畫面的整體顏色。
 - 燈光：整體畫面的光線效果。
+- 根據我給你的角色設定，生成符合特定角色的prompt。
 
 ### 2. negative prompt 要求
 - negative prompt部分以"**Negative Prompt:**"開頭，你想要避免出現在圖像中的內容都可以添加到"**Negative Prompt:**"後面。
@@ -104,6 +105,11 @@ Stable Diffusion是一款利用深度學習的文生圖模型，支援透過使�
 
 我想生成的圖片內容為：${story_slice}
 繪本故事中全部的設定如下：
+故事主角的prompt 設定如下：
+{  
+   prompt: " (best quality,4k,8k,highres,masterpiece:1.2),ultra-detailed,(realistic,photorealistic,photo-realistic:1.37),1boy,3-5 years old Chinese child,front-swept long bangs,round innocent face,chubby cheeks,sparkling almond-shaped eyes,(detailed eyelashes:1.2),small button nose,rosy lips,colorful kindergarten uniform,striped short-sleeve shirt,denim overalls,bright cheerful expression,holding a colorful backpack,sunlight filtering through a warmly lit room,soft watercolor illustration style,gentle pastel colors,wooden toy blocks scattered around,textured paper background,subtle ink wash edges,glowing childish excitement,(slightly exaggerated proportions:0.9),soft gradient background,warm and inviting classroom setting,<lora:childrens_story_book:0.5>,<lora:Storybook Redmond Kids Book v2.0:1>,",
+   negative_prompt: "nsfw,(low quality,normal quality,worst quality,jpeg artifacts),cropped,monochrome,lowres,low saturation,((watermark)),(white letters),skin spots,acnes,skin blemishes,age spot,mutated hands,mutated fingers,deformed,bad anatomy,disfigured,poorly drawn face,extra limb,ugly,poorly drawn hands,missing limb,floating limbs,disconnected limbs,out of focus,long neck,long body,extra fingers,fewer fingers,(multi nipples),bad hands,signature,username,bad feet,blurry,bad body,sharp edges,realistic shading,photographic style,adult features, "
+}   
 故事主角: ${storyRoleForm.mainCharacter}
 其他角色: ${storyRoleForm.otherCharacters} 
 故事情節: ${storyRoleForm.description}

@@ -160,7 +160,8 @@ const GenImage = (generated_story_image_prompt, _id, sd_name) => __awaiter(void 
         },
         controlnet: {
             args: {
-                input_image: "/Users/coco/Downloads/GeorgeImg.png",
+                // 參考圖片
+                input_image: "/Users/coco/Downloads/George4.png",
                 module: "t2ia_style_clipvision",
                 model: "IP Adapter Instant ID SDXL [eb2d3ec0]"
             }

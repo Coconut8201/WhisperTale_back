@@ -56,7 +56,7 @@ export function caseSdModelUse(storyStyle: string) {
         // 卡通繪本風格
         case "storybookRedmond": {
             payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
-            payload.exclusive_prompt = "KidsRedmAF, <lora:StorybookRedmondV2-KidsBook-KidsRedmAF:1>, ";
+            payload.exclusive_prompt = "KidsRedmAF, ,<lora:childrens_story_book:0.3>, <lora:Storybook Redmond Kids Book v2.0:1>, ";
             payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
             payload.sampler_index = "DPM++ 2M";
             payload.scheduler = "Karras";
@@ -85,7 +85,7 @@ export function caseSdModelUse(storyStyle: string) {
         // 卡通繪本風格
         default: {
             payload.sd_name = "SD XL v1.0 VAE Fix.safetensors [e6bb9ea85b]";
-            payload.exclusive_prompt = "KidsRedmAF, <lora:Storybook Redmond Kids Book v2.0:1>, ";
+            payload.exclusive_prompt = "KidsRedmAF, <lora:childrens_story_book:0.3>, <lora:Storybook Redmond Kids Book v2.0:1>";
             payload.negative_prompt = "bad art, ugly, deformed, watermark, duplicated";
             payload.sampler_index = "DPM++ 2M";
             payload.scheduler = "Karras";
